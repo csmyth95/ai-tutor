@@ -1,0 +1,26 @@
+{
+  "name": "express-backend",
+  "version": "1.0.0",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.21.2"
+  },
+  "description": "Backend service to handle GenAI requests",
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/csmyth95/ai-tutor.git"
+  },
+  "keywords": [
+    "expressjs"
+  ],
+  "author": "Conor Smyth",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/csmyth95/ai-tutor/issues"
+  },
+  "homepage": "https://github.com/csmyth95/ai-tutor#readme"
+}
