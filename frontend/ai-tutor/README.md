@@ -29,8 +29,20 @@ To learn more about Next.js, take a look at the following resources:
 
 You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
+## Deploying
+### NextJS Deployment Docs
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+
+### AWS Amplify
+1. Run `npm create amplify@latest -y` to create a lightweight scaffold.
+2. Get started using: `npx ampx sandbox`.
+3. Run `npx ampx help` for help.
+
+
+## Understanding the App
+### Purpose of _app.tsx
+* Shared UI: It defines the common UI structure and elements that will be shared across all pages. This is similar to a master template in other frameworks
+* Consistent Look and Feel: It ensures a consistent look and feel throughout the application by wrapping all pages with the same HTML structure, styles, and potentially navigation elements.
+* Root of the Component Tree: It's the highest-level component in the page hierarchy. Any component within the app directory will be rendered as a child within this layout.
+* Metadata: It can be used to set the default metadata for all pages.
+Font configuration: It can be used to set the fonts that will be used in the entire application.
