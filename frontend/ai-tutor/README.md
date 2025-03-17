@@ -21,13 +21,16 @@ You can start editing the page by modifying `app/page.tsx`. The page auto-update
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
 ## Learn More
-
 To learn more about Next.js, take a look at the following resources:
 
 - [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
 - [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
 
 You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+
+## Structure & UI
+1. Install ChakraUI - `npm install @chakra-ui/react @emotion/react @emotion/styled framer-motion`
+2. Follow guide from: https://medium.com/stackademic/architecting-a-front-end-app-with-next-js-a-technical-leaders-guide-7e0b27750a1f
 
 ## Deploying
 ### NextJS Deployment Docs
@@ -37,7 +40,6 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/bui
 1. Run `npm create amplify@latest -y` to create a lightweight scaffold.
 2. Get started using: `npx ampx sandbox`.
 3. Run `npx ampx help` for help.
-
 
 ## Understanding the App
 ### Purpose of _app.tsx
