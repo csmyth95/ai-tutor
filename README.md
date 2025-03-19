@@ -4,7 +4,7 @@ My AI tutor web application for learning.
 For anyone not used to Irish, Muinteoir is the Irish/Gaeilge for Teacher.
 
 ## Architecture
-
+See `Core Tech Stack` section of my [Medium article](https://medium.com/@conorSmyth13/building-my-own-ai-personal-learning-assistant-7bbe74915b3e)
 
 ## Proposed repo structure
 ```plaintext
