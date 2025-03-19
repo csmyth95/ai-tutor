@@ -1,5 +1,10 @@
-# ai-tutor
-My AI tutor web application for learning
+# MuinteoirAI
+My AI tutor web application for learning.
+
+For anyone not used to Irish, Muinteoir is the Irish/Gaeilge for Teacher.
+
+## Architecture
+
 
 ## Proposed repo structure
 ```plaintext
