@@ -14,8 +14,8 @@ The details: email, password, first name, last name. After inputting their detai
 The user should be presented with the app logo and a short form to enter their email and password.
 If a user forgets their password, they should be able to click a button to reset their password using their email.
 
-### Quiz
-TODO
+### Quiz Question
+Create a page for a generic Quiz page including a progress bar, current question number, the question itself and a form for the user to answer the question.
 
 ### Admin Dashboard
 A simple dashboard to show KPIs of the app including number of registered users, number of documents uploaded, summarisation success rate,
