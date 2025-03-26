@@ -19,7 +19,7 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${inter.className} min-h-screen bg-gray-50`}>
         {/* HEADER */}
-        <header className="bg-white shadow-sm">
+        <header className="bg-black shadow-sm">
           <div className="container mx-auto px-4 py-4 flex items-center justify-between">
             <nav className="flex items-center space-x-6">
               <Link href="/" className="text-gray-600 hover:text-green-600 transition-colors">Home</Link>
@@ -27,9 +27,6 @@ export default function RootLayout({
               <Link href="/register" className="text-gray-600 hover:text-green-600 transition-colors">Register</Link>
               <Link href="/faq" className="text-gray-600 hover:text-green-600 transition-colors">FAQs</Link>
             </nav>
-          </div>
-          <div className="flex items-center space-x-2">
-            <span className="text-xl font-bold text-gray-900">MuinteoirAI</span>
           </div>
         </header>
         {/* HomePage */}
