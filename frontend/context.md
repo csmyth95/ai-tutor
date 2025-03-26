@@ -1,20 +1,14 @@
 # MuinteoirAI Frontend Context
 ## App Pages
 ### Landing Page
-When a user enters the site, they should be presented with a beautiful landing page. The user should be presented with the title of the app, a short & descriptive one liner of what MuinteoirAI is followed by a more descriptive parapgrah of the features, a centred button to allow a user to upload their first PDF document or to login to their account. This page needs to be simple, to the point, eye catching and easily digestible. 
+When a user enters the site, they should be presented with a beautiful landing page. The user should see the title of the app, a short & descriptive one liner of what MuinteoirAI is followed by a more descriptive parapgraph of the features, a centred button to allow a user to register or to login to their account. This page needs to be simple, to the point and easily digestible. 
 
-Once the user has uploaded their 1st document, send them to a Registration page to complete their details.
-
-A navigation bar should have tabs to login, register for now.
+A navigation bar should have tabs to login & register for now.
 
 ### Registration
-Should be another simple page. Ask user to input their minimum details required to create a page. All these user forms should be centered.
-The details: email, password, first name, last name. After inputting their details, the user should be sent an email with a 1 time verification code & if the code is successfully entered, they should be presented with a login page.
-
+A simple page which asks the user to input minimum details required to create a page. All these user forms should be centered. The details: email, password, first name, last name. After inputting their details, the user should be sent an email with a 1 time verification code & if the code is successfully entered, they should be presented with a login page.
 While there is no backend data, return a default user and move on to the login page.
-
-Ensure simple verification for emails and passwords. Ensure passwords are at least 
-12 characters in length.
+Ensure simple verification for emails and passwords. Ensure passwords are at least 12 characters in length.
 
 ### Login
 The user should be presented with the app logo and a short form to enter their email and password and a rounded button to login to the web app.
