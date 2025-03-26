@@ -21,7 +21,6 @@ You can start editing the page by modifying `app/page.tsx`. The page auto-update
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
 ## Learn More
-
 To learn more about Next.js, take a look at the following resources:
 
 - [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
@@ -37,12 +36,3 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/bui
 1. Run `npm create amplify@latest -y` to create a lightweight scaffold.
 2. Get started using: `npx ampx sandbox`.
 3. Run `npx ampx help` for help.
-
-
-## Understanding the App
-### Purpose of _app.tsx
-* Shared UI: It defines the common UI structure and elements that will be shared across all pages. This is similar to a master template in other frameworks
-* Consistent Look and Feel: It ensures a consistent look and feel throughout the application by wrapping all pages with the same HTML structure, styles, and potentially navigation elements.
-* Root of the Component Tree: It's the highest-level component in the page hierarchy. Any component within the app directory will be rendered as a child within this layout.
-* Metadata: It can be used to set the default metadata for all pages.
-Font configuration: It can be used to set the fonts that will be used in the entire application.
