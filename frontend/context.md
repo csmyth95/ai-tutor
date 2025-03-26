@@ -1,12 +1,15 @@
 # MuinteoirAI Frontend Context
 ## App Pages
 ### Landing Page
-When a user enters the site, they should be presented with a beautiful landing page. The user should see the title of the app, a short & descriptive one liner of what MuinteoirAI is followed by a more descriptive parapgraph of the features, a centred button to allow a user to register or to login to their account. This page needs to be simple, to the point and easily digestible. 
+When a user enters the site, they should be presented with a beautiful landing page. The user should see the title of the app, a short & descriptive one liner of 
+what MuinteoirAI is followed by a more descriptive parapgraph of the features, a centred button to allow a user to register or to login to their account. This page 
+needs to be simple, to the point and easily digestible. 
 
 A navigation bar should have tabs to login & register for now.
 
 ### Registration
-A simple page which asks the user to input minimum details required to create a page. All these user forms should be centered. The details: email, password, first name, last name. After inputting their details, the user should be sent an email with a 1 time verification code & if the code is successfully entered, they should be presented with a login page.
+A simple page which asks the user to input minimum details required to create a page. All these user forms should be centered. The details: email, password, first name, last name. 
+After inputting their details, the user should be sent an email with a 1 time verification code & if the code is successfully entered, they should be presented with a login page.
 While there is no backend data, return a default user and move on to the login page.
 Ensure simple verification for emails and passwords. Ensure passwords are at least 12 characters in length.
 
@@ -18,7 +21,8 @@ While there is no backend data, once the user clicks login, send them to the
 Summaries page.
 
 ### Summary Page
-Only logged in users can reach this page. The user should be presented with a search bar at the top of the page to allow for searching their PDFs, each PDF ranked from newest to oldest, a button for each PDF to create a quiz for it. For users with no summaries, just display a button to upload their first summary.
+Only logged in users can reach this page. The user should be presented with a search bar at the top of the page to allow for searching their PDFs, each PDF ranked from newest to 
+oldest, a button for each PDF to create a quiz for it. For users with no summaries, just display a button to upload their first summary.
 
 ### Quiz Question
 Create a page for a generic Quiz page including a progress bar, current question number, the question itself and a form for the user to answer the question.
