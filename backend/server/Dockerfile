@@ -16,5 +16,7 @@ COPY . .
 # Expose the port the app runs on
 EXPOSE 4000
 
+# TODO Get required env vars.
+
 # Define the command to run the app
 CMD ["node", "server.js"]

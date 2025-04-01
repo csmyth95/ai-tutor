@@ -1,5 +1,5 @@
 # Use the official PostgreSQL slim image
-FROM postgres:16-alpine
+FROM postgres:17-alpine
 
 # Create a step for installing extensions (to be added later)
 # TODO Add extensions. Do these just need to be defined when calling the db?

@@ -18,3 +18,21 @@ See `Core Tech Stack` section of my [Medium article](https://medium.com/@conorSm
 ├── 📄 README.md            # Project overview and instructions
 └── 📄 package.json         # Central package.json (if using a monorepo tool like Turborepo)
 ```
+
+## Local Backend Setup
+### Pre-requisites
+* Homebrew - https://brew.sh/
+* colima - `brew install colima`
+* Go - required for Docker compose - https://go.dev/dl/.
+* Docker Compose - use `brew install docker docker-compose` to help  install or Google it.
+    * NOTE: For Docker to find the plugin, add "cliPluginsExtraDirs" to ~/.docker/config.json:
+    ```json
+    "cliPluginsExtraDirs": [
+        "/opt/homebrew/lib/docker/cli-plugins"
+    ]
+    ```
+* ExpressJS & dependencies
+* Postgres
+
+### Commands
+1. `docker-compose up`
