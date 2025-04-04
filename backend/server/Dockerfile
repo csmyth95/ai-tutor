@@ -1,14 +1,15 @@
 # Use the official Node.js 23 bookworm image. Bookworm is the latest Debian release.
-FROM node:23-bookworm-slim
+FROM node:20.19-bookworm-slim
 
 # Set the working directory inside the container
 WORKDIR /usr/src/app
 
 # Copy package.json and package-lock.json files to the working directory
-COPY package*.json ./
+COPY package.json ./
+COPY package-lock.json ./
 
 # Install dependencies
-RUN npm install --production
+RUN npm ci --only=production
 
 # Copy the rest of the application code to the working directory
 COPY . .
