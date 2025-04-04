@@ -6,7 +6,7 @@ services:
       context: ./backend/server
       dockerfile: Dockerfile
     ports:
-      - "3000:3000"
+      - "4000:4000"
     env_file:
       - ./backend/server/backend.local.env
     depends_on:

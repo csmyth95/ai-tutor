@@ -31,8 +31,9 @@ See `Core Tech Stack` section of my [Medium article](https://medium.com/@conorSm
         "/opt/homebrew/lib/docker/cli-plugins"
     ]
     ```
+* NodeJS 20.19
 * ExpressJS & dependencies
-* Postgres
+* Postgres - _docker will take care of this_
 
 ### Commands
-1. `docker-compose up`
+* Deploy latest source changes:  `docker-compose -f local.docker-compose.yml up --build`

@@ -1,23 +1,34 @@
 # backend
-## Steps to Build and Run the Dockerized App
-Build the Docker Image:
+## Local
+### Deploy
+Use docker-compose in the base dir to setup with Postgres. The app will fail otherwise.
+
+### Testing
+#### Sign In
 ```bash
-docker build -t express-backend .
+curl -X POST http://localhost:4000/api/users/login \
+-H "Content-Type: application/json" \
+-d '{
+  "email": "user@example.com",
+  "password": "password123"
+}'
 ```
 
-Run the Docker Container:
+#### Register
 ```bash
-# TODO Find an appropriate docker run command which can be killed via the terminal.
-docker run -t -i -p 4000:4000
+curl -X POST http://localhost:4000/api/users/signup \
+-H "Content-Type: application/json" \
+-d '{
+  "email": "user@example.com",
+  "password": "password123"
+}'
 ```
 
-Access the Application:
-Open a browser or use a tool like curl to visit: http://localhost:4000
 
 ## Local Development
 ### Initial Install
 1. Install Colima (as Docker Daemon): https://github.com/abiosoft/colima
-1. Install NodeJS 22 (current LTS): https://nodejs.org/en
+1. Install NodeJS 20.19 (current LTS): https://nodejs.org/en
 1. Install ExpressJS 5.X: https://expressjs.com/en/starter/installing.html
 1. PostgresSQL 17: https://www.postgresql.org/download/
 1. pgadmin

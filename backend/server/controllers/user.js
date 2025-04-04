@@ -3,9 +3,7 @@ const bcrypt = require("bcrypt");
 const models = require("../models");
 const jwt = require("jsonwebtoken");
 
-
 const User = models.users;
-
 
 const signup = async (req, res) => {
   try {
@@ -32,10 +30,11 @@ const signup = async (req, res) => {
             maxAge: 1 * 24 * 60 * 60, 
             httpOnly: true 
         });
-        console.log("user", JSON.stringify(user, null, 2));
 
-        // USer details saved successfully.
-        return res.status(201).send(user);
+        // Exclude the password from the response
+        const { password, ...userWithoutPassword } = user.toJSON();
+        // User details saved successfully.
+        return res.status(201).send(userWithoutPassword);
     } else {
         return res.status(409).send("Details are not correct");
     }
@@ -69,11 +68,13 @@ const login = async (req, res) => {
           //if password matches wit the one in the database, go ahead and generate a cookie for the user
           res.cookie("jwt", token, { maxAge: 1 * 24 * 60 * 60, httpOnly: true });
             
-          // Successfully login the user with new 24hr token.
-          return res.status(201).send(user);
+           // Exclude the password from the response
+          const { password, ...userWithoutPassword } = user.toJSON();
+          // User logged in successfully.
+          return res.status(201).send(userWithoutPassword);
         } else {
           // Password not the same as stored.
-          return res.status(401).send("Authentication failed: incorrect username or password.");
+          return res.status(401).send("Authentication failed: incorrect email or password.");
         }
     } else {
       // User not found

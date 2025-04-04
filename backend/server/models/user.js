@@ -17,6 +17,6 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.STRING,
             allowNull: false
         }
-    }, {timestamps: true}, )  // Adds createdAt and updatedAt fields. Current timestamp of type Date
+    }, {timestamps: true}, )  // Adds createdAt and updatedAt fields. Default is current timestamp of type Date.
     return User
- }
+ };
