@@ -1,8 +1,12 @@
-"use client";
+'use client';
+// TODO Try and rewrite this without use client
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 
-export default function SignUpPage() {
+
+export default function RegisterPage() {
+  const router = useRouter();
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [errors, setErrors] = useState({ email: "", password: "" });
 
@@ -12,10 +16,10 @@ export default function SignUpPage() {
   };
 
   const validatePassword = (password: string) => {
-    return password.length >= 6; // Example: Password must be at least 6 characters
+    return password.length >= 10; // Example: Password must be at least 6 characters
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     const emailError = validateEmail(formData.email)
@@ -28,8 +32,24 @@ export default function SignUpPage() {
     setErrors({ email: emailError, password: passwordError });
 
     if (!emailError && !passwordError) {
-      // Submit the form (e.g., send data to an API)
-      console.log("Form submitted:", formData);
+      try {
+        // TODO: test signup & ensure cookies are saved in the browser 
+        // TODO Replace localhost with env var from .env
+        // TODO Handle response from signup i.e set cookie for token
+        // await fetch('http://${process.env.BACKEND_HOSTNAME}:${process.env.BACKEND_PORT}/api/users/signup', {
+        //   method: 'POST',
+        //   headers: {
+        //     'Content-Type': 'application/json',
+        //   },
+        //   body: JSON.stringify(formData),
+        // });
+        router.push('/login'); // Redirect to login after successful registration
+      } catch (error) {
+        console.error('Registration failed:', error);
+        // TODO: Add react-hot-toast for client errors
+        // Example with react-hot-toast:
+        // toast.error('Registration failed. Please try again.');
+      }
     }
   };
 

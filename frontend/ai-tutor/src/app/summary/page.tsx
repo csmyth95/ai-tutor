@@ -2,30 +2,28 @@
 
 import { useState } from 'react';
 
-// Mock data - replace with actual API calls
-const mockPDFs = [
-  {
-    id: 1,
-    title: 'Mathematics Notes',
-    date: '2024-03-20',
-    size: '2.4 MB'
-  },
-  {
-    id: 2,
-    title: 'Physics Study Guide',
-    date: '2024-03-19',
-    size: '1.8 MB'
-  },
-  {
-    id: 3,
-    title: 'Chemistry Lab Report',
-    date: '2024-03-18',
-    size: '3.1 MB'
-  }
-];
-
-// TODO Does there need to be a default for this function?
 export default function SummaryPage() {
+  // Mock data - replace with actual API calls
+  const mockPDFs = [
+    {
+      id: 1,
+      title: 'Mathematics Notes',
+      date: '2024-03-20',
+      size: '2.4 MB'
+    },
+    {
+      id: 2,
+      title: 'Physics Study Guide',
+      date: '2024-03-19',
+      size: '1.8 MB'
+    },
+    {
+      id: 3,
+      title: 'Chemistry Lab Report',
+      date: '2024-03-18',
+      size: '3.1 MB'
+    }
+  ];
   const [searchQuery, setSearchQuery] = useState('');
   const [pdfs] = useState(mockPDFs);
 

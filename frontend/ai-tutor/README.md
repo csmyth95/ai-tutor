@@ -1,7 +1,7 @@
 # NextJS App
 ## Local
 ### Requirements
-* NodeJS: v20.19
+* NodeJS: v20.19.X
 * NextJS: v15.X.X
 * Tailwind
 
@@ -26,6 +26,9 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 ## Deploying
 ### NextJS Deployment Docs
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+
+### Using Docker
+* https://github.com/vercel/next.js/tree/canary/examples/with-docker
 
 ### AWS Amplify
 1. Run `npm create amplify@latest -y` to create a lightweight scaffold.
