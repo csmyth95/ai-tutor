@@ -28,11 +28,11 @@ export default function RootLayout({
                   Login
                 </Link>
               </div>
-              <div>
-                <Link href="/register" className="text-gray-300 hover:text-green-400 transition-colors">
-                  Register
-                </Link>
-              </div>
+                <div>
+                  <Link href="/register" className="text-gray-300 hover:text-green-400 transition-colors">
+                    Register
+                  </Link>
+                </div>
             </div>
           </nav>
         </header>

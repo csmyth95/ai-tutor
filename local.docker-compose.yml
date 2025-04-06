@@ -1,6 +1,20 @@
 version: '3.8'
 
 services:
+  frontend:
+    build: 
+      context: ./frontend/ai-tutor
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    env_file:
+      - ./frontend/ai-tutor/frontend.local.env
+    depends_on:
+      - postgres
+      - backend
+    networks:
+      - app-network
+
   backend:
     build: 
       context: ./backend/server
