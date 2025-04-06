@@ -47,14 +47,15 @@ export default function RootLayout({
             <div className="container mx-auto px-4 py-8">
               <div className="flex justify-between items-center">
                 <p className="text-gray-400">© 2024 MuinteoirAI. All rights reserved.</p>
-                <div className="flex gap-6">
+                {/* TODO Create basic privacy & terms of service pages */}
+                {/* <div className="flex gap-6">
                   <Link href="/privacy" className="text-gray-400 hover:text-green-400 transition-colors">
                     Privacy Policy
                   </Link>
                   <Link href="/terms" className="text-gray-400 hover:text-green-400 transition-colors">
                     Terms of Service
                   </Link>
-                </div>
+                </div> */}
               </div>
             </div>
           </footer>

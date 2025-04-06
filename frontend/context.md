@@ -16,9 +16,7 @@ Ensure simple verification for emails and passwords. Ensure passwords are at lea
 ### Login
 The user should be presented with the app logo and a short form to enter their email and password and a rounded button to login to the web app.
 If a user forgets their password, they should be able to click a button to reset their password using their email.
-
-While there is no backend data, once the user clicks login, send them to the
-Summaries page.
+Once the user logs in successfully, send them to the Summaries page.
 
 ### Summary Page
 Only logged in users can reach this page. The user should be presented with a search bar at the top of the page to allow for searching their PDFs, each PDF ranked from newest to 

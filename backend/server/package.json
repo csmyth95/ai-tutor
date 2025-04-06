@@ -3,13 +3,20 @@
   "version": "1.0.0",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js"
+    "start": "nodemon server.js"
   },
   "dependencies": {
-    "express": "^4.21.2"
+    "bcrypt": "^5.1.1",
+    "bcryptjs": "^3.0.2",
+    "cookie-parser": "^1.4.7",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "jsonwebtoken": "^9.0.2",
+    "pg": "^8.14.1",
+    "pg-hstore": "^2.3.4",
+    "sequelize": "^6.37.7"
   },
   "description": "Backend service to handle GenAI requests",
-  "devDependencies": {},
   "repository": {
     "type": "git",
     "url": "git+https://github.com/csmyth95/ai-tutor.git"
@@ -22,5 +29,8 @@
   "bugs": {
     "url": "https://github.com/csmyth95/ai-tutor/issues"
   },
-  "homepage": "https://github.com/csmyth95/ai-tutor#readme"
+  "homepage": "https://github.com/csmyth95/ai-tutor#readme",
+  "devDependencies": {
+    "nodemon": "^3.1.9"
+  }
 }
