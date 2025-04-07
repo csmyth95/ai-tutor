@@ -1,7 +1,6 @@
 node_modules/
 .idea/
-**.env
-
+**.env**
 
 # Exclude database/tables for now as not needed.
 /database/tables/

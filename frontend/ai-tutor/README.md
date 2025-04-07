@@ -5,18 +5,8 @@
 * NextJS: v15.X.X
 * Tailwind
 
-Manual Install: `npm install next@latest react@latest react-dom@latest`
 
-### Deployment
-First, run the development server:
-
-```bash
-npm run dev
-```
-
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Next & React Manual Install: `npm install next@latest react@latest react-dom@latest`
 
 ## Learn More
 - [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
@@ -24,6 +14,25 @@ This project uses [`next/font`](https://nextjs.org/docs/app/building-your-applic
 You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
 
 ## Deploying
+### Local
+Create your own `.env` file setting the following variables:
+```env
+NEXT_PUBLIC_POSTHOG_KEY=<POSTHOG_API_KEY>
+NEXT_PUBLIC_POSTHOG_HOST=<POSTHOG_HOSTNAME>
+```
+
+Without the .env file named as is, NextJS won't load the environment variables.
+
+Compile & install dependencies, then run the development server:
+```bash
+npm run build
+npm run dev
+```
+
+Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+
+This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+
 ### NextJS Deployment Docs
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
 
