@@ -21,6 +21,8 @@ NEXT_PUBLIC_POSTHOG_KEY=<POSTHOG_API_KEY>
 NEXT_PUBLIC_POSTHOG_HOST=<POSTHOG_HOSTNAME>
 ```
 
+Without the .env file named as is, NextJS won't load the environment variables.
+
 Compile & install dependencies, then run the development server:
 ```bash
 npm run build
