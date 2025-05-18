@@ -2,7 +2,7 @@
 ## Main Goals
 ### Summarise PDF
 #### LLM Context
-Using an open source LLM from huggingface, create an API route to summarise a PDF document and return the output in the API response. The API route will receive the
+Using a gemini open source LLM from huggingface, create an API route to summarise a PDF document and return the output in the API response. The API route will receive the
 full PDF and a user ID. Secure the API route. The user must be logged in to be able to upload a PDF. Describe any limitations of taking a full PDF in an API. 
 Do you recommend a better approach?
 Store the full PDF in AWS S3 using an AWS S3 sdk. Ensure that the PDF is tied to a specific user ID and stored in a logical folder structure and a unique name for easy retrieval.
@@ -17,3 +17,6 @@ Implementation Plan
 * Summarize the PDF: Use HuggingFace's transformers library to summarize the content.
 * Store Metadata in PostgreSQL: Store the summary and metadata, including the unique ID, user ID, and file path in AWS S3.
 * Secure Access: Tie the data to a specific user and implement appropriate security measures.
+
+## Display PDF
+The backend should provide an API endpoint to retrieve the PDF document based on the unique ID generated during the upload process. The frontend should handle the API call and display the PDF in the modal. The modal should also have a loading state while the PDF is being fetched from the backend. The modal should only return PDFs related to the logged in user.
