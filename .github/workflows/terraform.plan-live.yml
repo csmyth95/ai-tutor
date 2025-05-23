@@ -9,7 +9,7 @@ on:
       - '.github/workflows/terraform.plan.yml'
 jobs:
   terraform-plan-live:
-    name: Terraform Init and Plan
+    name: Run Terraform Plan PR Check
     runs-on: ubuntu-latest
 
     permissions:

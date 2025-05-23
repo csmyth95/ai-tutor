@@ -1,12 +1,12 @@
-name: Terraform Plan Live
+name: Terraform Apply Live
 
 on:
   push:
     tags: [ terraform-apply-live-* ]
 
 jobs:
-  terraform-plan-live:
-    name: Terraform Init and Plan
+  terraform-apply-live:
+    name: Run Terraform Apply command
     runs-on: ubuntu-latest
 
     permissions:
