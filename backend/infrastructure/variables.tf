@@ -11,8 +11,8 @@ variable "env" {
     default = "live"
 }
 
-variable "project_name" {
+variable "project" {
     description = "Project which the code is deployed for"
     type = string
-    default = "muinteoir-ai"
+    default = "muinteoir_ai"
 }

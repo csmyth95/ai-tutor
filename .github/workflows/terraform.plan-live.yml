@@ -34,10 +34,10 @@ jobs:
         with:
           terraform_version: "1.1.7"
 
-      # Step 4: Initialize Terraform
-      - name: Terraform Init
-        run: bash scripts/terraform/init.sh
+      # Step Run Terraform
+      - name: Deploy Terraform
+        run: |
+          terraform init -backend-config="backend_config.hcl"
+          terraform plan -var-file=env.tfvars -input=false -lock=false
+        working-directory: ./backend/infrastructure
 
-      # Step 5: Run Terraform Plan
-      - name: Terraform Plan
-        run: bash scripts/terraform/plan.sh

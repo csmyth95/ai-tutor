@@ -3,8 +3,8 @@ resource "aws_s3_bucket" "user_uploaded_documents" {
   bucket = "muinteoir-ai-user-uploaded-documents"
 
   tags = {
-    ENV = var.env
-    PROJECT = var.project_name
+    env = var.env
+    project = var.project
   }
 }
 
