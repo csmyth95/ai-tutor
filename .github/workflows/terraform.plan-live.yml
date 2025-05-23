@@ -25,12 +25,12 @@ jobs:
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v3
         with:
-          role-to-assume: arn:aws:iam::443370720454:oidc-provider/token.actions.githubusercontent.com/
+          role-to-assume:  arn:aws:iam::443370720454:role/s3_admin_github_csmyth95
           aws-region: eu-north-1
 
       # Step 3: Set up Terraform
       - name: Setup Terraform
-      - uses: hashicorp/setup-terraform@v3
+        uses: hashicorp/setup-terraform@v3
         with:
           terraform_version: "1.1.7"
 
