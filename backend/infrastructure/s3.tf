@@ -20,7 +20,7 @@ resource "aws_s3_bucket_lifecycle_configuration" "user_document_lifecycle_config
 }
 
 resource "aws_s3_bucket_server_side_encryption_configuration" "user_document_encryption_config" {
-  bucket = aws_s3_bucket.mybucket.id
+  bucket = aws_s3_bucket.mybucket.user_uploaded_documents
 
   rule {
     apply_server_side_encryption_by_default {
