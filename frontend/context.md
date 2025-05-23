@@ -21,6 +21,10 @@ Once the user logs in successfully, send them to the Summaries page.
 ### Summary Page
 Only logged in users can reach this page. The user should be presented with a search bar at the top of the page to allow for searching their PDFs, each PDF ranked from newest to 
 oldest, a button for each PDF to create a quiz for it. For users with no summaries, just display a button to upload their first summary.
+The user should be able to click on a PDF to view the summary of it. The summary should be displayed in a simple, readable format with the title of the PDF at the top, followed by the summary text.
+The user should be able to click a button to create a quiz for the PDF. The user should also be able to delete the summary if they wish.
+On the frontend, I should be able to display the PDF document in a modal. The modal should be responsive and allow the user to scroll through the document. The modal should also have a close button to exit the modal view. 
+There should also be a button to delete the PDF summary. The delete button should be a simple icon button that is easy to find and use. The user should be able to click on the delete button and a confirmation modal should appear asking if they are sure they want to delete the summary. If the user confirms, the summary should be deleted and the user should be redirected back to the summaries page.
 
 ### Quiz Question
 Create a page for a generic Quiz page including a progress bar, current question number, the question itself and a form for the user to answer the question.
