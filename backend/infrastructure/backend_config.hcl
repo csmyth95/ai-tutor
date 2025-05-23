@@ -1,2 +1,3 @@
 bucket = "project-config-live"
-prefix = "muinteoir_ai/terraform_state/live"
+key = "muinteoir_ai/terraform_state/live"
+region = "eu-north-1"
