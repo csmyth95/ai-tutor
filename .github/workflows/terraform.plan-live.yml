@@ -1,0 +1,43 @@
+name: Terraform Plan Live
+
+on:
+  pull_request:
+    branches:
+      - master
+    paths:
+      - 'backend/infrastructure/**'
+      - '.github/workflows/terraform.plan.yml'
+jobs:
+  terraform-plan-live:
+    name: Run Terraform Plan PR Check
+    runs-on: ubuntu-latest
+
+    permissions:
+      id-token: write
+      contents: read
+
+    steps:
+      # Step 1: Checkout the repository
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      # Step 2: Configure AWS credentials using OIDC
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v3
+        with:
+          role-to-assume:  arn:aws:iam::443370720454:role/s3_admin_github_csmyth95
+          aws-region: eu-north-1
+
+      # Step 3: Set up Terraform
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: "1.1.7"
+
+      # Step Run Terraform
+      - name: Deploy Terraform
+        run: |
+          terraform init -backend-config="backend_config.hcl"
+          terraform plan -var-file=env.tfvars -input=false -lock=false
+        working-directory: ./backend/infrastructure
+
