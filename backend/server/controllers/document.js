@@ -5,7 +5,6 @@ const models = require("../models");
 
 const Document = models.Document;
 const awsService = new AWSService();
-const bucketName = process.env.AWS_S3_BUCKET_NAME;
 
 
 const summarise_document = async (req, res) => {
@@ -20,12 +19,12 @@ const summarise_document = async (req, res) => {
     const uniqueId = crypto.createHash("sha256").update(userId + pdfName).digest("hex");
     const s3Path = `users/${userId}/${uniqueId}.pdf`;
 
-    const fileExists = await awsService.objectExists(bucketName, s3Key);
+    const fileExists = await awsService.objectExists(s3Key);
     if (fileExists) {
       return res.status(409).json({ error: "File already exists in the S3 bucket." });
     }
 
-    await awsService.uploadToS3(bucketName=bucketName, key=uniqueId, body=file.buffer.toString("utf-8"));
+    await awsService.uploadToS3(key=uniqueId, body=file.buffer.toString("utf-8"));
 
     // Summarize PDF content
     const summarizer = Pipeline("summarization", "facebook/bart-large-cnn");
@@ -82,11 +81,11 @@ const delete_document = async (req, res) => {
 
     // Check if the document exists & delete the file from S3
     const s3Key = document.s3Path;
-    const fileExists = await awsService.objectExists(bucketName, s3Key);
+    const fileExists = await awsService.objectExists(s3Key);
     if (!fileExists) {
       return res.status(404).json({ error: "File not found in S3." });
     }
-    await awsService.deleteFromS3(bucketName, s3Key);
+    await awsService.deleteFromS3(s3Key);
 
     res.json({ message: "Document deleted successfully." });
   } catch (error) {

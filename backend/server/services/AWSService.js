@@ -1,5 +1,6 @@
 const AWS = require("aws-sdk");
 
+// TODO Use Workload Identity instead of generating an access key?
 class AWSService {
   constructor() {
     this.s3 = new AWS.S3({
@@ -7,12 +8,13 @@ class AWSService {
       secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
       region: process.env.AWS_REGION,
     });
+    this.bucketName = process.env.AWS_S3_BUCKET_NAME || "muinteoir-ai-user-uploaded-documents";
   }
 
-  async uploadToS3(bucketName, key, body) {
+  async uploadToS3(key, body) {
     try {
       const params = {
-        Bucket: bucketName,
+        Bucket: this.bucketName,
         Key: key,
         Body: body,
       };
@@ -23,10 +25,10 @@ class AWSService {
     }
   }
 
-  async objectExists(bucketName, key) {
+  async objectExists(key) {
     try {
       const params = {
-        Bucket: bucketName,
+        Bucket: this.bucketName,
         Key: key,
       };
       await this.s3.headObject(params).promise();
@@ -40,10 +42,10 @@ class AWSService {
     }
   }
 
-  async deleteFromS3(bucketName, key) {
+  async deleteFromS3(key) {
     try {
       const params = {
-        Bucket: bucketName,
+        Bucket: this.bucketName,
         Key: key,
       };
       await this.s3.deleteObject(params).promise();

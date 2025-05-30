@@ -35,5 +35,53 @@ See `Core Tech Stack` section of my [Medium article](https://medium.com/@conorSm
 * ExpressJS & dependencies
 * Postgres - _docker will take care of this_
 
+## Create local.env file
+### backend/server
+* PORT: Port where ExpressJS server is running.
+* DB_NAME: Database name.
+* DB_PORT: Port where the database is running.
+* DB_USER: Database username for running operations.
+* DB_PASSWORD: password to access the database.
+* SECRET_KEY: Secret key used for signing JSON Web Tokens (JWT).
+* AWS_S3_BUCKET_NAME: Name of S3 bucket where user documents are stored
+* AWS_ACCESS_KEY_ID: AWS access key for S3.
+* AWS_SECRET_ACCESS_KEY: AWS secret key for S3.
+* AWS_REGION: AWS region where the S3 bucket is hosted.
+
+```
+# Server Configuration
+PORT=<Express server port>
+
+# Database Configuration
+DB_NAME=<PostgreSQL database name>
+DB_PORT=<PostgreSQL port>
+DB_USER=<PostgreSQL username>
+DB_PASSWORD=<PostgreSQL password>
+
+# AWS Configuration
+AWS_ACCESS_KEY_ID=<AWS access key>
+AWS_SECRET_ACCESS_KEY=<AWS secret key>
+AWS_REGION=<AWS region>
+AWS_S3_BUCKET_NAME=<S3 bucket name>
+
+# Security
+SECRET_KEY=<JWT secret key>
+```
+
+### database
+```
+# Database Configuration
+DB_NAME=<PostgreSQL database name>
+DB_PORT=<PostgreSQL port>
+DB_USER=<PostgreSQL username>
+DB_PASSWORD=<PostgreSQL password>
+```
+
+### frontend
+```
+NEXT_PUBLIC_POSTHOG_KEY=<POSTHOG_API_KEY>
+NEXT_PUBLIC_POSTHOG_HOST=<POSTHOG_HOSTNAME>
+```
+
 ### Commands
 * Deploy latest source changes:  `docker-compose -f local.docker-compose.yml up --build`

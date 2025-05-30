@@ -1,8 +1,10 @@
 const express = require('express');
 const dotenv = require('dotenv').config();
 const cookieParser = require('cookie-parser');
+
 const models = require('./models');
 const userRoutes = require('./routes/user');
+const documentRoutes = require('./routes/document');
 
 
 // TODO 
@@ -26,7 +28,8 @@ models.sequelize.sync({ force: true }).then(() => {
 })
 
 //routes for the user API
-app.use('/api/users', userRoutes)
+app.use('/api/v1/users', userRoutes)
+app.use('/api/v1/documents', documentRoutes);
 
 //listening to server connection
 app.listen(PORT, () => {
