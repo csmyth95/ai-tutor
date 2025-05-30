@@ -6,7 +6,7 @@ Use docker-compose in the base dir to setup with Postgres. The app will fail oth
 ### Testing
 #### Sign In
 ```bash
-curl -X POST http://localhost:4000/api/users/login \
+curl -X POST http://localhost:4000/api/v1/users/login \
 -H "Content-Type: application/json" \
 -d '{
   "email": "user@example.com",
@@ -16,7 +16,7 @@ curl -X POST http://localhost:4000/api/users/login \
 
 #### Register
 ```bash
-curl -X POST http://localhost:4000/api/users/signup \
+curl -X POST http://localhost:4000/api/v1/users/signup \
 -H "Content-Type: application/json" \
 -d '{
   "email": "user@example.com",
