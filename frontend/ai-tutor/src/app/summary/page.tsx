@@ -2,12 +2,12 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useRouter } from 'next/router';
 import { Summary } from '@/models/summary';
-import axiosInstance from '@/util/axiosInstance';
+import backendApi from '@/util/axiosHelper';
 
 
 const SummaryPage = () => {
   const [summaries, setSummaries] = useState<Summary[]>([]);
-  const [selectedPDF, setSelectedPDF] = useState(null);
+  const [selectedPDF, setSelectedPDF] = useState(null as Summary | null);
   const [showModal, setShowModal] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const router = useRouter();
@@ -16,11 +16,11 @@ const SummaryPage = () => {
     // Fetch summaries from the backend
     const fetchSummaries = async () => {
       try {
-        const response = await axiosInstance.get('/api/v1/documents', {
+        const response = await backendApi.get('/api/v1/documents', {
           headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
         });
         setSummaries(response.data);
-      } catch (error) {
+      } catch (error: any) {
         console.error('Error fetching summaries:', error);
         if (error.response?.status === 401) {
           router.push('/login'); // Redirect to login if unauthorized
@@ -76,7 +76,7 @@ const SummaryPage = () => {
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {filteredSummaries.map((summary: Summary) => (
+          {filteredSummaries.map((summary) => (
             <div
               key={summary.id}
               className="border p-4 rounded shadow hover:shadow-lg"
@@ -88,7 +88,7 @@ const SummaryPage = () => {
               <div className="flex justify-between mt-4">
                 <button
                   onClick={() => {
-                    setSelectedPDF(summary: Summary);
+                    setSelectedPDF(summary);
                     setShowModal(true);
                   }}
                   className="px-4 py-2 bg-blue-500 text-white rounded"
@@ -97,7 +97,7 @@ const SummaryPage = () => {
                 </button>
                 <button
                   // TODO Alternative: use react-toastify for better UX
-                  onClick={() => alert('This feature is not implemented yet.')
+                  onClick={() => alert('This feature is not implemented yet.')}
                   className="px-4 py-2 bg-yellow-500 text-white rounded"
                 >
                   Create Quiz
@@ -118,7 +118,7 @@ const SummaryPage = () => {
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
           <div className="bg-white p-6 rounded shadow-lg w-3/4 max-h-[80vh] overflow-y-auto">
             <h2 className="text-xl font-bold mb-4">{selectedPDF.title}</h2>
-            <p>{selectedPDF.text}</p>
+            <p>{selectedPDF.summary}</p>
             <button
               onClick={() => setShowModal(false)}
               className="mt-4 px-4 py-2 bg-gray-500 text-white rounded"

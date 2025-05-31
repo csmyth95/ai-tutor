@@ -1,6 +1,9 @@
 node_modules/
 .idea/
+
+# Ignore environment variable files
 **.env**
+!local.env
 
 # Exclude database/tables for now as not needed.
 /database/tables/

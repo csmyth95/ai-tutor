@@ -32,4 +32,3 @@ README.md
 ### Commands
 * Start local server: `npm run dev`. -> `http://localhost:3000`
 * Lint project: `npm run lint`
-
