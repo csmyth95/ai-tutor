@@ -1,17 +1,21 @@
 // Importing modules
-const { Sequelize, DataTypes } = require('sequelize');
-const dotenv = require('dotenv');
+import { Sequelize, DataTypes } from 'sequelize';
+import { config } from 'dotenv';
 
-dotenv.config();
+config();
 const db_name = process.env.DB_NAME;
-const db_port = process.env.DB_PORT;
-const db_admin = process.env.DB_USER;
-const db_password = process.env.DB_PASSWORD;
 
 // Initialise Database connection
 const sequelize = new Sequelize(
-    `postgres://${db_admin}:${db_password}@postgres:${db_port}/${db_name}`,
-    { dialect: "postgres" }
+    process.env.DB_NAME,
+    process.env.DB_USER,
+    process.env.DB_PASSWORD,
+    {
+        host: process.env.DB_HOST,
+        port: process.env.DB_PORT,
+        dialect: 'postgres',
+        logging: false, // Optional: disable SQL logging
+    }
 );
 
 // Checking if connection is done
@@ -29,5 +33,4 @@ db.sequelize = sequelize;
 db.users = require('./user')(sequelize, DataTypes);
 db.documents = require('./document')(sequelize, DataTypes);
 
-// Exporting the module
-module.exports = db;
+export default db;
