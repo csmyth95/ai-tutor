@@ -6,11 +6,12 @@
     "start": "nodemon server.js"
   },
   "dependencies": {
-    "bcrypt": "^5.1.1",
-    "bcryptjs": "^3.0.2",
+    "@huggingface/transformers": "^3.5.2",
+    "aws-sdk": "^2.1692.0",
     "cookie-parser": "^1.4.7",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
+    "huggingface": "^1.4.0",
     "jsonwebtoken": "^9.0.2",
     "pg": "^8.14.1",
     "pg-hstore": "^2.3.4",

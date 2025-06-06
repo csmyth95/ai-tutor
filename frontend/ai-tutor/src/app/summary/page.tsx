@@ -1,99 +1,197 @@
 'use client';
+import { useRouter } from 'next/navigation';
+import { ChangeEvent, useEffect, useState } from 'react';
+import axios from 'axios';
+import { Summary } from '@/models/summary';
+import backendApi from '@/util/axiosHelper';
 
-import { useState } from 'react';
 
-export default function SummaryPage() {
-  // Mock data - replace with actual API calls
-  const mockPDFs = [
-    {
-      id: 1,
-      title: 'Mathematics Notes',
-      date: '2024-03-20',
-      size: '2.4 MB'
-    },
-    {
-      id: 2,
-      title: 'Physics Study Guide',
-      date: '2024-03-19',
-      size: '1.8 MB'
-    },
-    {
-      id: 3,
-      title: 'Chemistry Lab Report',
-      date: '2024-03-18',
-      size: '3.1 MB'
-    }
-  ];
+const SummaryPage = () => {
+  const [summaries, setSummaries] = useState<Summary[]>([]);
+  const [selectedPDF, setSelectedPDF] = useState(null as Summary | null);
+  const [showModal, setShowModal] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-  const [pdfs] = useState(mockPDFs);
+  const [isUploading, setIsUploading] = useState(false);
+  const router = useRouter();
 
-  const filteredPDFs = pdfs.filter(pdf => 
-    pdf.title.toLowerCase().includes(searchQuery.toLowerCase())
+  useEffect(() => {
+    // Fetch summaries from the backend
+    const fetchSummaries = async () => {
+      try {
+        const response = await backendApi.get('/api/v1/documents', {
+          headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+        });
+        setSummaries(response.data);
+      } catch (error) {
+        console.error('Error fetching summaries:', error);
+        if (axios.isAxiosError(error) && error.response?.status === 401) {
+          router.push('/login'); // Redirect to login if unauthorized
+        }
+      }
+    };
+
+    fetchSummaries();
+  }, [router]);
+
+  const handleDelete = async (id: string) => {
+    if (confirm('Are you sure you want to delete this summary?')) {
+      try {
+        await axios.delete(`/api/v1/documents/delete/${id}`, {
+          headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+        });
+        setSummaries(summaries.filter((summary: Summary) => summary.id !== id));
+        alert('Summary successfully deleted.');
+      } catch (error) {
+        console.error('Error deleting summary:', error);
+        alert('Failed to delete summary.');
+      }
+    }
+  };
+
+  const handleSearch = (e: ChangeEvent<HTMLInputElement>) => {
+    setSearchQuery(e.target.value);
+  };
+
+  const handleUpload = async (e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setIsUploading(true);
+
+    const formData = new FormData();
+    formData.append('file', file);
+
+    try {
+      const response = await backendApi.post(
+        '/api/v1/documents/upload',
+        formData, 
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`
+          },
+        }
+      );
+      setSummaries((prevSummaries) => [response.data, ...prevSummaries]);
+      alert('PDF uploaded successfully!');
+    } catch (error) {
+      console.error('Error uploading PDF:', error);
+      alert('Failed to upload PDF.');
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
+
+  const filteredSummaries = summaries.filter((summary: Summary) =>
+    summary.title.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   return (
-    <div className="min-h-[calc(100vh-12rem)]">
-      <h1 className="text-3xl font-bold mb-8">Your Documents</h1>
-      
+    <div className="p-6">
+      <h1 className="text-2xl font-bold mb-4">Your Summaries</h1>
+
+      {/* Upload Button */}
+      <div className="mb-4">
+        <label
+          htmlFor="upload"
+          className="px-4 py-2 bg-green-500 text-white rounded cursor-pointer"
+        >
+          {isUploading ? 'Uploading...' : 'Upload New PDF'}
+        </label>
+        <input
+          id="upload"
+          type="file"
+          accept="application/pdf"
+          onChange={handleUpload}
+          className="hidden"
+        />
+      </div>
+
       {/* Search Bar */}
-      <div className="mb-8">
-        <div className="relative">
+      {summaries.length > 0 && (
+        <input
+          type="text"
+          placeholder="Search PDFs..."
+          value={searchQuery}
+          onChange={handleSearch}
+          className="w-full p-2 border border-gray-300 rounded mb-4"
+        />
+      )}
+
+      {/* No summaries */}
+      {summaries.length === 0 ? (
+        <div className="text-center">
+          <p>No summaries found.</p>
           <input
-            type="text"
-            placeholder="Search your PDFs..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full px-4 py-3 pl-12 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-transparent"
+            id="upload-empty"
+            type="file"
+            accept="application/pdf"
+            onChange={handleUpload}
+            className="hidden"
           />
+          <button
+            onClick={() => document.getElementById('upload-empty')?.click()}
+            className="mt-4 px-4 py-2 bg-green-500 text-white rounded"
+          >
+            Upload Your First Summary
+          </button>
         </div>
-      </div>
-
-      {/* Upload Button - Always visible */}
-      <div className="mb-8">
-        <button className="flex items-center space-x-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors">
-          <span>Upload New Document</span>
-        </button>
-      </div>
-
-      {/* PDF List */}
-      {filteredPDFs.length > 0 ? (
-        <div className="space-y-4">
-          {filteredPDFs.map(pdf => (
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {filteredSummaries.map((summary) => (
             <div
-              key={pdf.id}
-              className="bg-white rounded-lg shadow-sm p-6 flex items-center justify-between hover:shadow-md transition-shadow"
+              key={summary.id}
+              className="border p-4 rounded shadow hover:shadow-lg"
             >
-              <div className="flex items-center space-x-4">
-                <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
-                </div>
-                <div>
-                  <h3 className="text-lg font-semibold text-gray-900">{pdf.title}</h3>
-                  <p className="text-sm text-gray-500">
-                    {new Date(pdf.date).toLocaleDateString()} • {pdf.size}
-                  </p>
-                </div>
-              </div>
-              <div className="flex space-x-3">
-                <button className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
+              <h2 className="font-bold text-lg">{summary.title}</h2>
+              <p className="text-sm text-gray-600">
+                {summary.summary.slice(0, 100)}...
+              </p>
+              <div className="flex justify-between mt-4">
+                <button
+                  onClick={() => {
+                    setSelectedPDF(summary);
+                    setShowModal(true);
+                  }}
+                  className="px-4 py-2 bg-blue-500 text-white rounded"
+                >
                   View Summary
                 </button>
-                <button className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors">
+                <button
+                  // TODO Alternative: use react-toastify for better UX
+                  onClick={() => alert('This feature is not implemented yet.')}
+                  className="px-4 py-2 bg-yellow-500 text-white rounded"
+                >
                   Create Quiz
+                </button>
+                <button
+                  onClick={() => handleDelete(summary.id)}
+                  className="px-4 py-2 bg-red-500 text-white rounded"
+                >
+                  Delete
                 </button>
               </div>
             </div>
           ))}
         </div>
-      ) : (
-        <div className="text-center py-12 bg-white rounded-lg shadow-sm">
-          <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+      )}
+
+      {showModal && selectedPDF && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+          <div className="bg-white p-6 rounded shadow-lg w-3/4 max-h-[80vh] overflow-y-auto">
+            <h2 className="text-xl font-bold mb-4">{selectedPDF.title}</h2>
+            <p>{selectedPDF.summary}</p>
+            <button
+              onClick={() => setShowModal(false)}
+              className="mt-4 px-4 py-2 bg-gray-500 text-white rounded"
+            >
+              Close
+            </button>
           </div>
-          <h3 className="text-xl font-semibold text-gray-900 mb-2">No Documents Found</h3>
-          <p className="text-gray-600 mb-6">
-            {searchQuery ? "No documents match your search" : "Upload your first document to get started"}
-          </p>
         </div>
       )}
     </div>
   );
-} 
+};
+
+export default SummaryPage;

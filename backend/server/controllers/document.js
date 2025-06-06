@@ -1,9 +1,9 @@
-const crypto = require("crypto");
-const { Pipeline } = require("@huggingface/transformers"); // Example summarization pipeline
-const AWSService = require("../services/AWSService");
-const models = require("../models");
+import { createHash } from "crypto";
+import { Pipeline } from "@huggingface/transformers";
+import AWSService from "../services/AWSService";
+import { Document as _Document } from "../models";
 
-const Document = models.Document;
+const Document = _Document;
 const awsService = new AWSService();
 
 
@@ -16,7 +16,7 @@ const summarise_document = async (req, res) => {
     }
 
     const pdfName = file.originalname;
-    const uniqueId = crypto.createHash("sha256").update(userId + pdfName).digest("hex");
+    const uniqueId = createHash("sha256").update(userId + pdfName).digest("hex");
     const s3Path = `users/${userId}/${uniqueId}.pdf`;
 
     const fileExists = await awsService.objectExists(s3Key);
@@ -158,7 +158,7 @@ const search_documents = async (req, res) => {
   }
 };
 
-module.exports = {
+export default {
   summarise_document,
   delete_document,
   get_user_documents,

@@ -1,9 +1,9 @@
-const AWS = require("aws-sdk");
+import { S3 } from "aws-sdk";
 
 // TODO Use Workload Identity instead of generating an access key?
 class AWSService {
   constructor() {
-    this.s3 = new AWS.S3({
+    this.s3 = new S3({
       accessKeyId: process.env.AWS_ACCESS_KEY_ID,
       secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
       region: process.env.AWS_REGION,
@@ -57,4 +57,4 @@ class AWSService {
   }
 }
 
-module.exports = AWSService;
+export default AWSService;

@@ -1,5 +1,5 @@
 //importing modules
-const db = require("../models");
+const db = require("../models").default;
 
 // Globals
 const User = db.users;
