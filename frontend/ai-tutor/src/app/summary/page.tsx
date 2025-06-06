@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from 'react';
+'use client';
+import { useRouter } from 'next/navigation';
+import { ChangeEvent, useEffect, useState } from 'react';
 import axios from 'axios';
-import { useRouter } from 'next/router';
 import { Summary } from '@/models/summary';
 import backendApi from '@/util/axiosHelper';
 
@@ -10,6 +11,7 @@ const SummaryPage = () => {
   const [selectedPDF, setSelectedPDF] = useState(null as Summary | null);
   const [showModal, setShowModal] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [isUploading, setIsUploading] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
@@ -20,16 +22,16 @@ const SummaryPage = () => {
           headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
         });
         setSummaries(response.data);
-      } catch (error: any) {
+      } catch (error) {
         console.error('Error fetching summaries:', error);
-        if (error.response?.status === 401) {
+        if (axios.isAxiosError(error) && error.response?.status === 401) {
           router.push('/login'); // Redirect to login if unauthorized
         }
       }
     };
 
     fetchSummaries();
-  }, []);
+  }, [router]);
 
   const handleDelete = async (id: string) => {
     if (confirm('Are you sure you want to delete this summary?')) {
@@ -46,9 +48,39 @@ const SummaryPage = () => {
     }
   };
 
-  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleSearch = (e: ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(e.target.value);
   };
+
+  const handleUpload = async (e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setIsUploading(true);
+
+    const formData = new FormData();
+    formData.append('file', file);
+
+    try {
+      const response = await backendApi.post(
+        '/api/v1/documents/upload',
+        formData, 
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`
+          },
+        }
+      );
+      setSummaries((prevSummaries) => [response.data, ...prevSummaries]);
+      alert('PDF uploaded successfully!');
+    } catch (error) {
+      console.error('Error uploading PDF:', error);
+      alert('Failed to upload PDF.');
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
 
   const filteredSummaries = summaries.filter((summary: Summary) =>
     summary.title.toLowerCase().includes(searchQuery.toLowerCase())
@@ -57,18 +89,48 @@ const SummaryPage = () => {
   return (
     <div className="p-6">
       <h1 className="text-2xl font-bold mb-4">Your Summaries</h1>
-      <input
-        type="text"
-        placeholder="Search PDFs..."
-        value={searchQuery}
-        onChange={handleSearch}
-        className="w-full p-2 border border-gray-300 rounded mb-4"
-      />
+
+      {/* Upload Button */}
+      <div className="mb-4">
+        <label
+          htmlFor="upload"
+          className="px-4 py-2 bg-green-500 text-white rounded cursor-pointer"
+        >
+          {isUploading ? 'Uploading...' : 'Upload New PDF'}
+        </label>
+        <input
+          id="upload"
+          type="file"
+          accept="application/pdf"
+          onChange={handleUpload}
+          className="hidden"
+        />
+      </div>
+
+      {/* Search Bar */}
+      {summaries.length > 0 && (
+        <input
+          type="text"
+          placeholder="Search PDFs..."
+          value={searchQuery}
+          onChange={handleSearch}
+          className="w-full p-2 border border-gray-300 rounded mb-4"
+        />
+      )}
+
+      {/* No summaries */}
       {summaries.length === 0 ? (
         <div className="text-center">
           <p>No summaries found.</p>
+          <input
+            id="upload-empty"
+            type="file"
+            accept="application/pdf"
+            onChange={handleUpload}
+            className="hidden"
+          />
           <button
-            onClick={() => router.push('/upload')}
+            onClick={() => document.getElementById('upload-empty')?.click()}
             className="mt-4 px-4 py-2 bg-green-500 text-white rounded"
           >
             Upload Your First Summary
