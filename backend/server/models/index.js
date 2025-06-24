@@ -1,6 +1,8 @@
 // Importing modules
 import { Sequelize, DataTypes } from 'sequelize';
 import { config } from 'dotenv';
+import User from './user.js';
+import Document from './document.js';
 
 config();
 const db_name = process.env.DB_NAME;
@@ -30,7 +32,7 @@ db.Sequelize = Sequelize;
 db.sequelize = sequelize;
 
 // Connecting to model
-db.users = require('./user')(sequelize, DataTypes);
-db.documents = require('./document')(sequelize, DataTypes);
+db.users = User(sequelize, DataTypes);
+db.documents = Document(sequelize, DataTypes);
 
 export default db;

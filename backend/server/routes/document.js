@@ -1,7 +1,7 @@
 //importing modules
 import { Router } from 'express';
-import documentController from '../controllers/document';
-import { authenticate } from '../middleware/auth';
+import documentController from '../controllers/document.js';
+import { authenticate } from '../middleware/auth.js';
 
 const router = Router();
 

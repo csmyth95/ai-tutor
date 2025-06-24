@@ -1,9 +1,11 @@
-import { S3 } from "aws-sdk";
+ // Import the Amazon S3 service client
+ import { S3Client } from "@aws-sdk/client-s3"; 
+
 
 // TODO Use Workload Identity instead of generating an access key?
 class AWSService {
   constructor() {
-    this.s3 = new S3({
+    this.s3 = new S3Client({
       accessKeyId: process.env.AWS_ACCESS_KEY_ID,
       secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
       region: process.env.AWS_REGION,
@@ -18,7 +20,13 @@ class AWSService {
         Key: key,
         Body: body,
       };
-      return await this.s3.upload(params).promise();
+      return this.s3.send(
+          new PutObjectCommand({
+            Bucket: this.bucketName,
+            Key: key,
+            Body: body,
+          })
+      ).promise();
     } catch (error) {
       console.error("Error uploading to S3:", error);
       throw error;
@@ -27,12 +35,17 @@ class AWSService {
 
   async objectExists(key) {
     try {
-      const params = {
+      const command = new GetObjectCommand({
         Bucket: this.bucketName,
         Key: key,
-      };
-      await this.s3.headObject(params).promise();
-      return true; // Object exists
+      });
+      const response = await client.send(command);
+      if (response.$metadata.httpStatusCode === 200) {
+        return true; // Object exists
+      }
+      else {
+        return false; // Object does not exist
+      }
     } catch (error) {
       if (error.code === "NotFound") {
         return false; // Object does not exist
@@ -44,11 +57,8 @@ class AWSService {
 
   async deleteFromS3(key) {
     try {
-      const params = {
-        Bucket: this.bucketName,
-        Key: key,
-      };
-      await this.s3.deleteObject(params).promise();
+      const command = new DeleteBucketCommand({ Bucket: this.bucketName });
+      await this.s3.send(command);
       console.log(`Deleted ${key} from bucket ${bucketName}`);
     } catch (error) {
       console.error("Error deleting from S3:", error);

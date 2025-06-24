@@ -1,12 +1,12 @@
 //importing modules
-const db = require("../models").default;
+import db from "../models/index.js";
 
 // Globals
 const User = db.users;
 
 // Function to check if username or email already exist in the database.
 // Avoids having two users with the same username and email.
-const saveUser = async (req, res, next) => {
+export const saveUser = async (req, res, next) => {
  //search the database to see if user exist
   try {
     // check if email already exists
@@ -29,7 +29,7 @@ const saveUser = async (req, res, next) => {
 };
 
 // Authentication Middleware - TODO Test
-const authenticate = (req, res, next) => {
+export const authenticate = (req, res, next) => {
   const token = req.headers.authorization?.split(" ")[1];
   if (!token) return res.status(401).json({ error: "Unauthorized" });
 
@@ -38,11 +38,4 @@ const authenticate = (req, res, next) => {
     req.user = user;
     next();
   });
-};
-
-
-//exporting module
-module.exports = {
-  saveUser,
-  authenticate
 };

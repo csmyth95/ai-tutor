@@ -1,9 +1,8 @@
 import { createHash } from "crypto";
 import { Pipeline } from "@huggingface/transformers";
-import AWSService from "../services/AWSService";
-import { Document as _Document } from "../models";
+import AWSService from "../services/AWSService.js";
+import Document from "../models/document.js";
 
-const Document = _Document;
 const awsService = new AWSService();
 
 
@@ -42,6 +41,7 @@ const summarise_document = async (req, res) => {
     const tags = tagsResponse[0].generated_text.split(",").map(tag => tag.trim());
 
     // Store Metadata in Postgres
+    // TODO Rename s3Path to storagePath or similar for clarity.
     await Document.create({
       id: uniqueId,
       userId: userId,

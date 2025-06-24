@@ -1,9 +1,8 @@
 //importing modules
 import { hash, compare } from "bcrypt";
-import { users } from "../models";
-import { sign } from "jsonwebtoken";
+import User from "../models/user.js";
+import sign from "jsonwebtoken";
 
-const User = users;
 
 const signup = async (req, res) => {
   try {

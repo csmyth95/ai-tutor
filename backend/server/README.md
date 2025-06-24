@@ -1,5 +1,9 @@
 # backend
 ## Local
+### npm commands
+* package install: `npm install <package>`
+* build: `npm run start`
+
 ### Deploy
 Use docker-compose in the base dir to setup with Postgres. The app will fail otherwise.
 
