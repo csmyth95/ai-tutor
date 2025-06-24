@@ -1,5 +1,9 @@
 # backend
 ## Local
+### npm commands
+* package install: `npm install <package>`
+* build: `npm run start`
+
 ### Deploy
 Use docker-compose in the base dir to setup with Postgres. The app will fail otherwise.
 
@@ -31,6 +35,8 @@ curl -X POST http://localhost:4000/api/v1/users/signup \
 1. Install NodeJS 20.19 (current LTS): https://nodejs.org/en
 1. Install ExpressJS 5.X: https://expressjs.com/en/starter/installing.html
 1. PostgresSQL 17: https://www.postgresql.org/download/
+
+#### npm dependencies installed using npm ci
 1. pgadmin
 1. Sequelize: object-relational mapper for PostgreSQL - https://sequelize.org/docs/v6/getting-started/
 1. Pg & pg-hstore: pg is a PostgreSQL client for Node.js and pg-hstore is a node package for serializing and deserializing JSON data to hstore format

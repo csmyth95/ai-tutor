@@ -1,15 +1,15 @@
 //importing modules
-const express = require('express');
-const summariseController = require('../controllers/document');
-const auth = require('../middleware/auth');
+import { Router } from 'express';
+import documentController from '../controllers/document.js';
+import { authenticate } from '../middleware/auth.js';
 
-const router = express.Router();
+const router = Router();
 
 // Routes
-router.post('/summarise', auth.authenticate, summariseController.summarise_document);
-router.delete('/delete', auth.authenticate, summariseController.delete_document);
-router.get("/", auth.authenticate, summariseController.get_user_documents);
-router.get("/:documentId", auth.authenticate, summariseController.get_document);
-router.get("/search", auth.authenticate, summariseController.search_documents);
+router.post('/summarise', authenticate, documentController.summarise_document);
+router.delete('/:documentId', authenticate, documentController.delete_document);
+router.get("/", authenticate, documentController.get_user_documents);
+router.get("/:documentId", authenticate, documentController.get_document);
+router.get("/search", authenticate, documentController.search_documents);
 
-module.exports = router;
+export default router;
