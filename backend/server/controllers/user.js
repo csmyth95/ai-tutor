@@ -1,7 +1,7 @@
 //importing modules
 import { hash, compare } from "bcrypt";
-import User from "../models/user.js";
-import sign from "jsonwebtoken";
+import db from "../models/index.js";
+import jwt from "jsonwebtoken";
 
 
 const signup = async (req, res) => {
@@ -13,13 +13,13 @@ const signup = async (req, res) => {
         password: await hash(password, 10),
     };
     // Saving the user
-    const user = await User.create(data);
+    const user = await db.users.create(data);
 
     //if user details is captured:
     //  1. generate token with the user's id and a salt.
     //  2. set cookie with the token generated
     if (user) {
-        let token = sign(
+        let token = jwt.sign(
             { id: user.id }, 
             process.env.SECRET_KEY, 
             {expiresIn: 1 * 24 * 60 * 60 * 1000,}
@@ -48,7 +48,7 @@ const login = async (req, res) => {
   try {
     const { email, password } = req.body;
    
-    const user = await User.findOne({
+    const user = await db.users.findOne({
       where: {
         email: email
       }     
@@ -60,7 +60,7 @@ const login = async (req, res) => {
    
         // if password is the same, then generate token with the user's id and a salt.
         if (isSame) {
-          let token = sign({ id: user.id }, process.env.SECRET_KEY, {
+          let token = jwt.sign({ id: user.id }, process.env.SECRET_KEY, {
             expiresIn: 1 * 24 * 60 * 60 * 1000, // 24hr
           });
    

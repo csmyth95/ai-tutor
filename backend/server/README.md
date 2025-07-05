@@ -28,6 +28,15 @@ curl -X POST http://localhost:4000/api/v1/users/signup \
 }'
 ```
 
+# TODO Fix the cookie usage here
+#### Summmarise Document
+```bash
+curl -X POST http://localhost:4000/api/v1/documents/summarise \
+-b cookie.txt \
+-H "Content-Type: multipart/form-data" \
+-F "pdf=@/Users/conorsmyth/projects/ai-tutor/test_document.pdf"
+```
+
 
 ## Local Development
 ### Initial Install

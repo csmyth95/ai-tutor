@@ -18,12 +18,13 @@ const summarise_document = async (req, res) => {
     const uniqueId = createHash("sha256").update(userId + pdfName).digest("hex");
     const s3Path = `users/${userId}/${uniqueId}.pdf`;
 
-    const fileExists = await awsService.objectExists(s3Key);
-    if (fileExists) {
-      return res.status(409).json({ error: "File already exists in the S3 bucket." });
-    }
-
-    await awsService.uploadToS3(key=uniqueId, body=file.buffer.toString("utf-8"));
+    // TODO Add option for local storgage. Best design pattern for this? Factory pattern?
+    // TODO Add AWS features after summarisation is complete. 
+    // const fileExists = await awsService.objectExists(s3Key);
+    // if (fileExists) {
+    //   return res.status(409).json({ error: "File already exists in the S3 bucket." });
+    // }
+    // await awsService.uploadToS3(key=uniqueId, body=file.buffer.toString("utf-8"));
 
     // Summarize PDF content
     const summarizer = Pipeline("summarization", "facebook/bart-large-cnn");
