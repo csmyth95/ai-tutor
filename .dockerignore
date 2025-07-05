@@ -1,6 +1,9 @@
 node_modules
 .next
 .git
-*.log
+**.log
 Dockerfile
 README.md
+.env.**
+npm-debug.log
+.vscode
