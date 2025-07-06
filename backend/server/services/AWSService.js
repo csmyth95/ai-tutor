@@ -1,5 +1,6 @@
  // Import the Amazon S3 service client
- import { S3Client } from "@aws-sdk/client-s3"; 
+//  TODO Verify with real AWS docs
+ import { S3Client, PutObjectCommand, GetObjectCommand, DeleteObjectCommand } from "@aws-sdk/client-s3"; 
 
 
 // TODO Use Workload Identity instead of generating an access key?
@@ -26,7 +27,7 @@ class AWSService {
             Key: key,
             Body: body,
           })
-      ).promise();
+      ); // Removed .promise() as it's not needed with async/await and S3Client v3
     } catch (error) {
       console.error("Error uploading to S3:", error);
       throw error;
@@ -39,7 +40,7 @@ class AWSService {
         Bucket: this.bucketName,
         Key: key,
       });
-      const response = await client.send(command);
+      const response = await this.s3.send(command);
       if (response.$metadata.httpStatusCode === 200) {
         return true; // Object exists
       }
@@ -57,9 +58,9 @@ class AWSService {
 
   async deleteFromS3(key) {
     try {
-      const command = new DeleteBucketCommand({ Bucket: this.bucketName });
+      const command = new DeleteObjectCommand({ Bucket: this.bucketName, Key: key });
       await this.s3.send(command);
-      console.log(`Deleted ${key} from bucket ${bucketName}`);
+      console.log(`Deleted ${key} from bucket ${this.bucketName}`);
     } catch (error) {
       console.error("Error deleting from S3:", error);
       throw error;

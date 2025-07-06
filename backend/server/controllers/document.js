@@ -2,6 +2,7 @@ import { createHash } from "crypto";
 import { Pipeline } from "@huggingface/transformers";
 import AWSService from "../services/AWSService.js";
 import Document from "../models/document.js";
+import { Op } from "sequelize";
 
 const awsService = new AWSService();
 

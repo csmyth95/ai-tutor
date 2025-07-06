@@ -1,5 +1,6 @@
 //importing modules
 import db from "../models/index.js";
+import jwt from "jsonwebtoken";
 
 // Globals
 const User = db.users;

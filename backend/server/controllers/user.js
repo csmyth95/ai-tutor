@@ -70,7 +70,7 @@ const login = async (req, res) => {
            // Exclude the password from the response
           const { password, ...userWithoutPassword } = user.toJSON();
           // User logged in successfully.
-          return res.status(201).send(userWithoutPassword);
+          return res.status(201).send({ ...userWithoutPassword, token });
         } else {
           // Password not the same as stored.
           return res.status(401).send("Authentication failed: incorrect email or password.");

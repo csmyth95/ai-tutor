@@ -85,3 +85,4 @@ NEXT_PUBLIC_POSTHOG_HOST=<POSTHOG_HOSTNAME>
 
 ### Commands
 * Deploy latest source changes:  `docker-compose -f local.docker-compose.yml up --build`
+* Check Docker logs of a container: `docker logs ai-tutor-backend-1`
