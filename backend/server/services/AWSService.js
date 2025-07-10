@@ -21,13 +21,14 @@ class AWSService {
         Key: key,
         Body: body,
       };
-      return this.s3.send(
+      await this.s3.send(
           new PutObjectCommand({
             Bucket: this.bucketName,
             Key: key,
             Body: body,
           })
-      ); // Removed .promise() as it's not needed with async/await and S3Client v3
+      );
+      console.log(`Uploaded ${key} to bucket ${this.bucketName}`);
     } catch (error) {
       console.error("Error uploading to S3:", error);
       throw error;
