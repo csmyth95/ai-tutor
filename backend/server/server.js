@@ -19,12 +19,12 @@ app.use(cookieParser());
 
 // TODO Remove force True when deploying fully
 // Synchronisethe database and force it to false so we dont lose data
-db.sequelize.sync({ force: false }).then(() => {
+db.sequelize.sync({ force: true }).then(() => {
   console.log("Sequilize has been re synced with db.")
-})
+});
 
 //routes for the user API
-app.use('/api/v1/users', userRoutes)
+app.use('/api/v1/users', userRoutes);
 app.use('/api/v1/documents', documentRoutes);
 
 //listening to server connection

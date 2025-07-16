@@ -1,5 +1,5 @@
 const Document = (sequelize, DataTypes) => {
-    const Document = sequelize.define("document", {
+    const Document = sequelize.define( "document", {
         id: {
             type: DataTypes.STRING, 
             primaryKey: true 

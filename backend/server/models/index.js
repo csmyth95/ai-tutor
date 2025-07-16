@@ -5,31 +5,36 @@ import { config } from 'dotenv';
 import User from './user.js';
 import Document from './document.js';
 
-config();
-const db_name = process.env.DB_NAME;
-const db_port = process.env.DB_PORT;
-const db_admin = process.env.DB_USER;
-const db_password = process.env.DB_PASSWORD;
+const db = {}
+try {
+    config();
+    const db_name = process.env.POSTGRES_DB;
+    const db_port = process.env.POSTGRES_PORT;
+    const db_user = process.env.POSTGRES_USER;
+    const db_password = process.env.POSTGRES_PASSWORD;
+    const db_host = process.env.POSTGRES_HOST;
+    
+    // Initialise Database connection
+    const sequelize = new Sequelize(`postgres://${db_user}:${db_password}@${db_host}:${db_port}/${db_name}`,{
+        dialect: "postgres"
+    });
+    
+    // Checking if connection is done
+    sequelize.authenticate().then(() => {
+        console.log(`Connected to Postgres database: ${db_name}`);
+    }).catch((err) => {
+        console.log(err);
+    });   
 
-// Initialise Database connection
-const sequelize = new Sequelize(
-    `postgres://${db_admin}:${db_password}@postgres:${db_port}/${db_name}`,
-    { dialect: "postgres" }
-);
+    db.Sequelize = Sequelize;
+    db.sequelize = sequelize;
 
-// Checking if connection is done
-sequelize.authenticate().then(() => {
-    console.log(`Connected to Postgres database: ${db_name}`);
-}).catch((err) => {
-    console.log(err);
-});
-
-const db = {};
-db.Sequelize = Sequelize;
-db.sequelize = sequelize;
-
-// Connecting to model
-db.users = User(sequelize, DataTypes);
-db.documents = Document(sequelize, DataTypes);
+    // Connecting to model
+    db.users = User(sequelize, DataTypes);
+    db.documents = Document(sequelize, DataTypes);
+} catch (error) {
+    console.log("Failed to connect to PostgresDB: ${error}")
+    process.exit(1);
+}
 
 export default db;
