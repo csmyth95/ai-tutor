@@ -1,9 +1,10 @@
-const AWS = require("aws-sdk");
+ // TODO Verify with real AWS docs & test
+import { S3Client, PutObjectCommand, GetObjectCommand, DeleteObjectCommand } from "@aws-sdk/client-s3"; 
 
-// TODO Use Workload Identity instead of generating an access key?
+
 class AWSService {
   constructor() {
-    this.s3 = new AWS.S3({
+    this.s3 = new S3Client({
       accessKeyId: process.env.AWS_ACCESS_KEY_ID,
       secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
       region: process.env.AWS_REGION,
@@ -18,7 +19,14 @@ class AWSService {
         Key: key,
         Body: body,
       };
-      return await this.s3.upload(params).promise();
+      await this.s3.send(
+          new PutObjectCommand({
+            Bucket: this.bucketName,
+            Key: key,
+            Body: body,
+          })
+      );
+      console.log(`Uploaded ${key} to bucket ${this.bucketName}`);
     } catch (error) {
       console.error("Error uploading to S3:", error);
       throw error;
@@ -27,12 +35,17 @@ class AWSService {
 
   async objectExists(key) {
     try {
-      const params = {
+      const command = new GetObjectCommand({
         Bucket: this.bucketName,
         Key: key,
-      };
-      await this.s3.headObject(params).promise();
-      return true; // Object exists
+      });
+      const response = await this.s3.send(command);
+      if (response.$metadata.httpStatusCode === 200) {
+        return true; // Object exists
+      }
+      else {
+        return false; // Object does not exist
+      }
     } catch (error) {
       if (error.code === "NotFound") {
         return false; // Object does not exist
@@ -44,12 +57,9 @@ class AWSService {
 
   async deleteFromS3(key) {
     try {
-      const params = {
-        Bucket: this.bucketName,
-        Key: key,
-      };
-      await this.s3.deleteObject(params).promise();
-      console.log(`Deleted ${key} from bucket ${bucketName}`);
+      const command = new DeleteObjectCommand({ Bucket: this.bucketName, Key: key });
+      await this.s3.send(command);
+      console.log(`Deleted ${key} from bucket ${this.bucketName}`);
     } catch (error) {
       console.error("Error deleting from S3:", error);
       throw error;
@@ -57,4 +67,4 @@ class AWSService {
   }
 }
 
-module.exports = AWSService;
+export default AWSService;

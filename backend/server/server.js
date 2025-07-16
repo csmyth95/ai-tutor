@@ -1,15 +1,10 @@
-const express = require('express');
-const dotenv = require('dotenv').config();
-const cookieParser = require('cookie-parser');
+import express, { json, urlencoded } from 'express';
+import cookieParser from 'cookie-parser';
 
-const models = require('./models');
-const userRoutes = require('./routes/user');
-const documentRoutes = require('./routes/document');
+import db from './models/index.js';
+import userRoutes from './routes/user.js';
+import documentRoutes from './routes/document.js';
 
-
-// TODO 
-// 1. Use docker compose to setup the Postgres & Server containers
-// 2. Test using Postman locally
 
 //setting up your port
 const PORT = process.env.PORT || 4000;
@@ -18,12 +13,13 @@ const PORT = process.env.PORT || 4000;
 const app = express();
 
 //middleware
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(json());
+app.use(urlencoded({ extended: true }));
 app.use(cookieParser());
 
-//synchronizing the database and forcing it to false so we dont lose data
-models.sequelize.sync({ force: true }).then(() => {
+// TODO Remove force True when deploying fully
+// Synchronisethe database and force it to false so we dont lose data
+db.sequelize.sync({ force: false }).then(() => {
   console.log("Sequilize has been re synced with db.")
 })
 

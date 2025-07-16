@@ -1,5 +1,5 @@
 //user model
-module.exports = (sequelize, DataTypes) => {
+const User = (sequelize, DataTypes) => {
     const User = sequelize.define( "user", {
         id: {
             type: DataTypes.UUID,
@@ -19,4 +19,6 @@ module.exports = (sequelize, DataTypes) => {
         }
     }, {timestamps: true}, )  // Adds createdAt and updatedAt fields. Default is current timestamp of type Date.
     return User
- };
+};
+
+export default User;

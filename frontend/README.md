@@ -22,7 +22,9 @@ README.md
 ## Local Setup
 ### Requirements
 * Install NodeJS 22 (current LTS): https://nodejs.org/en
-* NextJS - https://nextjs.org/ 
+* React 19 - `npm install react@19 react-dom@19.1.0`
+* NextJS 15 - https://nextjs.org/ - `npm install next@15.2.4`
+
 
 ### Skeleton
 `npx create-next-app@latest`
@@ -30,4 +32,3 @@ README.md
 ### Commands
 * Start local server: `npm run dev`. -> `http://localhost:3000`
 * Lint project: `npm run lint`
-

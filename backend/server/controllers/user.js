@@ -1,9 +1,8 @@
 //importing modules
-const bcrypt = require("bcrypt");
-const models = require("../models");
-const jwt = require("jsonwebtoken");
+import { hash, compare } from "bcrypt";
+import db from "../models/index.js";
+import jwt from "jsonwebtoken";
 
-const User = models.users;
 
 const signup = async (req, res) => {
   try {
@@ -11,10 +10,10 @@ const signup = async (req, res) => {
     //hashing users password before its saved to the database with bcrypt.
     const data = {
         email,
-        password: await bcrypt.hash(password, 10),
+        password: await hash(password, 10),
     };
     // Saving the user
-    const user = await User.create(data);
+    const user = await db.users.create(data);
 
     //if user details is captured:
     //  1. generate token with the user's id and a salt.
@@ -49,7 +48,7 @@ const login = async (req, res) => {
   try {
     const { email, password } = req.body;
    
-    const user = await User.findOne({
+    const user = await db.users.findOne({
       where: {
         email: email
       }     
@@ -57,7 +56,7 @@ const login = async (req, res) => {
    
     //if user email is found, compare password with bcrypt
     if (user) {
-        const isSame = await bcrypt.compare(password, user.password);
+        const isSame = await compare(password, user.password);
    
         // if password is the same, then generate token with the user's id and a salt.
         if (isSame) {
@@ -71,7 +70,7 @@ const login = async (req, res) => {
            // Exclude the password from the response
           const { password, ...userWithoutPassword } = user.toJSON();
           // User logged in successfully.
-          return res.status(201).send(userWithoutPassword);
+          return res.status(201).send({ ...userWithoutPassword, token });
         } else {
           // Password not the same as stored.
           return res.status(401).send("Authentication failed: incorrect email or password.");
@@ -85,7 +84,7 @@ const login = async (req, res) => {
   }
 };
    
-module.exports = {
+export default {
     signup,
     login,
 };

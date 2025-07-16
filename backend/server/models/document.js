@@ -1,4 +1,4 @@
-module.exports = (sequelize, DataTypes) => {
+const Document = (sequelize, DataTypes) => {
     const Document = sequelize.define("document", {
         id: {
             type: DataTypes.STRING, 
@@ -25,5 +25,7 @@ module.exports = (sequelize, DataTypes) => {
             allowNull: true,
         },
     }, {timestamps: true}, )  // Adds createdAt and updatedAt fields. Default is current timestamp of type Date.
-    return Document;
+    return Document
 };
+
+export default Document;

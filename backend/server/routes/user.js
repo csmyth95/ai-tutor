@@ -1,14 +1,14 @@
 //importing modules
-const express = require('express');
-const userController = require('../controllers/user');
-const auth = require('../middleware/auth');
+import { Router } from 'express';
+import userController from '../controllers/user.js';
+import { saveUser } from '../middleware/auth.js';
 
-const router = express.Router();
+const router = Router();
 const { signup, login } = userController;
 
 // Routes
 // Pass the middleware function to the signup
-router.post('/signup', auth.saveUser, signup);
+router.post('/signup', saveUser, signup);
 router.post('/login', login );
 
-module.exports = router;
+export default router;
