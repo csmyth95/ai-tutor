@@ -32,8 +32,8 @@ curl -X POST http://localhost:4000/api/v1/users/signup \
 #### Summmarise Document
 ```bash
 curl -X POST http://localhost:4000/api/v1/documents/summarise \
--b cookie.txt \
--H "Content-Type: multipart/form-data" \
+-H "Authorization: Basic {{TOKEN}}" \
+-H "Content-Type: application/pdf" \
 -F "pdf=@/Users/conorsmyth/projects/ai-tutor/test_document.pdf"
 ```
 
@@ -54,6 +54,12 @@ curl -X POST http://localhost:4000/api/v1/documents/summarise \
 1. Dotenv: Access to env vars
 1. JsonWeb Token: Generate tokens (Optional: Use Postgres SQL instead?)
 1. CookieParser: Set cookies
+
+### Run Unit Tests
+Uses the jest unit test framework.
+```bash
+npm test
+```
 
 
 ## Concepts
