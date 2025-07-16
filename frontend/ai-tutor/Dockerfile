@@ -16,6 +16,7 @@ ENV NEXT_TELEMETRY_DISABLED=1
 RUN npm run build
 
 # Production image
+# TODO Should this be a new image or the base? - Look up Docker multi step
 FROM node:20.19-slim AS runner
 WORKDIR /app
 

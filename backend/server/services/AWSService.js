@@ -1,9 +1,7 @@
- // Import the Amazon S3 service client
-//  TODO Verify with real AWS docs
- import { S3Client, PutObjectCommand, GetObjectCommand, DeleteObjectCommand } from "@aws-sdk/client-s3"; 
+ // TODO Verify with real AWS docs & test
+import { S3Client, PutObjectCommand, GetObjectCommand, DeleteObjectCommand } from "@aws-sdk/client-s3"; 
 
 
-// TODO Use Workload Identity instead of generating an access key?
 class AWSService {
   constructor() {
     this.s3 = new S3Client({
