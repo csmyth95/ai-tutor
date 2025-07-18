@@ -23,6 +23,7 @@ services:
       - ./backend/server/local.env
     depends_on:
       - postgres
+      - llm
     networks:
       - app-network
 
@@ -39,6 +40,16 @@ services:
     networks:
       - app-network
     restart: always
+  
+  llm:
+    image: ollama/ollama:latest
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama:/root/.ollama
+    networks:
+      - app-network
+    restart: always
 
 networks:
   app-network:
@@ -46,3 +57,4 @@ networks:
 
 volumes:
   postgres-data:
+  ollama:
