@@ -43,3 +43,4 @@ Run colima with: `colima start --cpu 2 --memory 4 --disk 60`
 * Deploy latest source changes:  `docker-compose -f local.docker-compose.yml up --build`
 * Check Docker logs of a container: `docker logs ai-tutor-backend-1`
 * Remove local docker database: `docker volume rm ai-tutor_postgres-data`
+* Chat to the LLM directly: `docker exec -it ai-tutor-llm-1 ollama run gemma3:1b` - exit with `/bye`
