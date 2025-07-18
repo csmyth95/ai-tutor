@@ -3,10 +3,12 @@ import { createHash } from "crypto";
 // import ollama from 'ollama';
 
 import AWSService from "../services/AWSService.js";
+import LocalLLM from "../services/LocalLLM.js";
 import Document from "../models/document.js";
 import { Op } from "sequelize";
 
 const awsService = new AWSService();
+const localLLM = new LocalLLM();
 
 
 const summarise_document = async (req, res) => {
@@ -23,52 +25,17 @@ const summarise_document = async (req, res) => {
     const pdfName = document.originalname;
     const uniqueId = createHash("sha256").update(userId + pdfName).digest("hex");
     console.log('Document Unique ID: ', uniqueId);
-    console.log('Document fields: ', documentFields)
-    res.json({ id: uniqueId, fileName: pdfName });
-    // const s3Path = `users/${userId}/${uniqueId}.pdf`;
+    console.log('Document fields: ', documentFields);
+    console.log('Document file: ', document);
+    
+    const title = documentFields.title;
+    const summary = await localLLM.summarise(documentFields.text);
+    const tags = await localLLM.generate_tags(summary);
 
-    // TODO Add option for local storgage. Best design pattern for this? Factory pattern?
-    // TODO Add AWS features after summarisation is complete. 
+    console.log('Document summary: ', summary);
+    console.log('Document title & tags: ${title}, ${tags}');
 
-    // TODO Is this going to work as is? Do I need a way to login to Hugging Face?
-    // Summarize PDF content
-    // const summarizer = Pipeline("summarization", "facebook/bart-large-cnn");
-    // const summary = await summarizer(file.buffer.toString("utf-8"));
-    // const summaryResponse = await ollama.chat({
-    //   model: 'llama3.1',
-    //   messages: [{ role: 'user', content: 'Summarise the following text: ' + file.buffer.toString("utf-8") }],
-    // })
-    // const summary = summaryResponse.message.content;
-    // console.log('Summarised text: ', summary);
-    // res.json({ id: uniqueId, summary });
-
-    // Generate title and tags using an LLM
-    // const titlePrompt = `Generate a concise and descriptive title for the following text:\n\n${summary}`;
-    // const tagsPrompt = `Generate a list of relevant tags (comma-separated) for the following text:\n\n${summary}`;
-
-    // const titleResponse = await ollama.chat({
-    //   model: 'llama3.1',
-    //   messages: [{ role: 'user', content: titlePrompt }],
-    // })
-    // const tagsResponse = await ollama.chat({
-    //   model: 'llama3.1',
-    //   messages: [{ role: 'user', content: tagsPrompt }],
-    // })
-    // const title = titleResponse.message.content.trim();
-    // const tags = tagsResponse.message.content.split(",").map(tag => tag.trim());
-   
-    // Store Metadata in Postgres
-    // TODO Rename s3Path to storagePath or similar for clarity.
-    // await Document.create({
-    //   id: uniqueId,
-    //   userId: userId,
-    //   s3Path: s3Path,
-    //   summary: summary,
-    //   title: title,
-    //   tags: tags,
-    // });
-
-    // res.json({ id: uniqueId, summary });
+    res.json({ id: uniqueId, fileName: pdfName, title: title, summary: summary, tags: tags });
   } catch (error) {
     console.error("SummariseDocumentError: " + error);
     res.status(500).json({ error: "An error occurred: " + error });
