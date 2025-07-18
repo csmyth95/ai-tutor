@@ -12,17 +12,18 @@ const awsService = new AWSService();
 const summarise_document = async (req, res) => {
   try {
     const userId = req.user.id;
-    const file = req.file;
-    if (!file || !userId) {
+    const document = req.file;
+    const documentFields = req.body;
+    if (!document || !userId) {
       return res.status(400).json({ error: "Invalid request. Missing file or user." });
     }
-    if (file.mimetype !== 'application/pdf') {
-      return res.status(400).json({ error: "Invalid file type. Please upload a PDF file." });
+    if (document.mimetype !== 'application/pdf') {
+      return res.status(400).json({ error: "Invalid file type. Please use 'application/pdf'." });
     }
-
-    const pdfName = file.originalname;
+    const pdfName = document.originalname;
     const uniqueId = createHash("sha256").update(userId + pdfName).digest("hex");
-    console.log('Unique ID: ', uniqueId);
+    console.log('Document Unique ID: ', uniqueId);
+    console.log('Document fields: ', documentFields)
     res.json({ id: uniqueId, fileName: pdfName });
     // const s3Path = `users/${userId}/${uniqueId}.pdf`;
 
@@ -69,7 +70,7 @@ const summarise_document = async (req, res) => {
 
     // res.json({ id: uniqueId, summary });
   } catch (error) {
-    console.error(error);
+    console.error("SummariseDocumentError: " + error);
     res.status(500).json({ error: "An error occurred: " + error });
   }
 };

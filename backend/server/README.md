@@ -33,8 +33,8 @@ curl -X POST http://localhost:4000/api/v1/users/signup \
 ```bash
 curl -X POST http://localhost:4000/api/v1/documents/summarise \
 -H "Authorization: Basic {{TOKEN}}" \
--H "Content-Type: application/pdf" \
--F "pdf=@/Users/conorsmyth/projects/ai-tutor/test_document.pdf"
+-H "Content-Type: multipart/form-data" \
+-F "document=@/Users/conorsmyth/projects/ai-tutor/test_document.pdf;type=application/pdf"
 ```
 
 
