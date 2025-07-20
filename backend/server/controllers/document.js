@@ -36,7 +36,8 @@ const summarise_document = async (req, res) => {
     
     const title = await localLLM.generate_title(documentText);
     const summary = await localLLM.summarise(documentText);
-    const tags = await localLLM.generate_tags(summary);
+    // Return empty list for now until tags generation is fixed.
+    const tags = []
     console.log('Document title: ', title);
     console.log('Document tags: ', tags);
     console.log('Document summary: ', summary);
