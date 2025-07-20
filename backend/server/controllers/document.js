@@ -1,11 +1,11 @@
 import { createHash } from "crypto";
-// import { Pipeline } from "@huggingface/transformers";
-// import ollama from 'ollama';
+import { Op } from "sequelize";
+import fs from "fs";
+import path from "path";
 
 import AWSService from "../services/AWSService.js";
 import LocalLLM from "../services/LocalLLM.js";
 import Document from "../models/document.js";
-import { Op } from "sequelize";
 
 const awsService = new AWSService();
 const localLLM = new LocalLLM();
@@ -15,7 +15,6 @@ const summarise_document = async (req, res) => {
   try {
     const userId = req.user.id;
     const document = req.file;
-    const documentFields = req.body;
     if (!document || !userId) {
       return res.status(400).json({ error: "Invalid request. Missing file or user." });
     }
@@ -24,21 +23,28 @@ const summarise_document = async (req, res) => {
     }
     const pdfName = document.originalname;
     const uniqueId = createHash("sha256").update(userId + pdfName).digest("hex");
-    console.log('Document Unique ID: ', uniqueId);
-    console.log('Document fields: ', documentFields);
     console.log('Document file: ', document);
+
+    const documentPath = path.resolve(document.path);
+    console.log('Creating file stream from document path: ', documentPath);
+    let documentText = fs.readFileSync(documentPath, 'utf8');
+    console.log('Document text read from file: ', documentText);
+    if (!documentText) {
+      return res.status(400).json({ error: "No text found in document. Please upload a valid PDF file." });
+    }
+    documentText = documentText.replace(/\s+/g, ' ');
     
-    const title = documentFields.title;
-    const summary = await localLLM.summarise(documentFields.text);
-    const tags = await localLLM.generate_tags(summary);
-
+    const title = await localLLM.generate_title(documentText);
+    const summary = await localLLM.summarise(documentText);
+    // Return empty list for now until tags generation is fixed.
+    const tags = []
+    console.log('Document title: ', title);
+    console.log('Document tags: ', tags);
     console.log('Document summary: ', summary);
-    console.log('Document title & tags: ${title}, ${tags}');
-
-    res.json({ id: uniqueId, fileName: pdfName, title: title, summary: summary, tags: tags });
+    res.json({ id: uniqueId, summary: summary, title: title, tags: tags });
   } catch (error) {
     console.error("SummariseDocumentError: " + error);
-    res.status(500).json({ error: "An error occurred: " + error });
+    res.status(500).json({ error: "Error: " + error });
   }
 };
 
