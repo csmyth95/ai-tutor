@@ -1,55 +1,73 @@
 'use client';
-// TODO Try and rewrite this without use client
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
+const BACKEND_URL = "http://backend:4000";
+// TODO Move this to .env file once working
 
 export default function RegisterPage() {
   const router = useRouter();
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [errors, setErrors] = useState({ email: "", password: "" });
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const validateEmail = (email: string) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(email);
+    return emailRegex.test(email) && email.length > 0;
   };
-
   const validatePassword = (password: string) => {
-    return password.length >= 10; // Example: Password must be at least 6 characters
+    return password.length >= 10;
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+    if (isSubmitting) return;
+    setIsSubmitting(true);
+    try {
+      e.preventDefault();
+      
+      const emailError = validateEmail(formData.email)
+        ? ""
+        : "Please enter a valid email address.";
+      const passwordError = validatePassword(formData.password)
+        ? ""
+        : "Password must be at least 10 characters long.";
 
-    const emailError = validateEmail(formData.email)
-      ? ""
-      : "Please enter a valid email address.";
-    const passwordError = validatePassword(formData.password)
-      ? ""
-      : "Password must be at least 6 characters long.";
-
-    setErrors({ email: emailError, password: passwordError });
-
-    if (!emailError && !passwordError) {
-      try {
-        // TODO: test signup & ensure cookies are saved in the browser 
-        // TODO Replace localhost with env var from .env
-        // TODO Handle response from signup i.e set cookie for token
-        // await fetch('http://${process.env.BACKEND_HOSTNAME}:${process.env.BACKEND_PORT}/api/users/signup', {
-        //   method: 'POST',
-        //   headers: {
-        //     'Content-Type': 'application/json',
-        //   },
-        //   body: JSON.stringify(formData),
-        // });
-        router.push('/login'); // Redirect to login after successful registration
-      } catch (error) {
-        console.error('Registration failed:', error);
-        // TODO: Add react-hot-toast for client errors
-        // Example with react-hot-toast:
-        // toast.error('Registration failed. Please try again.');
+      setErrors({ email: emailError, password: passwordError });
+      if (!emailError && !passwordError) {
+        try {
+          // TODO Still failing to get the BACKEND URL set. Why isn't this loading?
+          const url_path = `${BACKEND_URL}/api/v1/users/register`
+          console.log('Calling Register API using: ', url_path);
+          const response = await fetch(url_path, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              email: formData.email,
+              password: formData.password
+            }),
+          });
+          if (response.status === 201 || response.status === 200) {
+            router.push('/login');
+          }
+          else {
+            let errorData = {};
+            try {
+              errorData = await response.json();
+            } catch (e) {
+              console.warn('Failed to parse error response:', e);
+            }
+            throw new Error('Registration failed. Please try again: ', errorData);        
+          }
+        } catch (error) {
+          console.error('Registration failed:', error);
+          alert(error instanceof Error ? error.message : 'Registration failed. Please try again.');
+        }
       }
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -62,7 +80,7 @@ export default function RegisterPage() {
     <div className="flex min-h-[calc(100vh-12rem)]">
       {/* Left Container: App Title */}
       <div className="w-1/3 bg-gray-100 flex items-center justify-center">
-        <h1 className="text-4xl font-bold">App Title</h1>
+        <h1 className="text-4xl font-bold">MuinteoirAI</h1>
       </div>
 
       {/* Right Container: Registration Form */}

@@ -20,6 +20,11 @@ const nextConfig: NextConfig = {
   // This is required to support PostHog trailing slash API requests
   skipTrailingSlashRedirect: true,
   output: "standalone",
+  logging: {
+    fetches: {
+      fullUrl: true,
+    }
+  },
 };
 
 export default nextConfig;
