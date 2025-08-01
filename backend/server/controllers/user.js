@@ -4,10 +4,9 @@ import db from "../models/index.js";
 import jwt from "jsonwebtoken";
 
 
-const signup = async (req, res) => {
+const register = async (req, res) => {
   try {
     const { email, password } = req.body;
-    //hashing users password before its saved to the database with bcrypt.
     const data = {
         email,
         password: await hash(password, 10),
@@ -24,12 +23,11 @@ const signup = async (req, res) => {
             process.env.SECRET_KEY, 
             {expiresIn: 1 * 24 * 60 * 60 * 1000,}
         );
-
+        // TODO will the cookie name be jwt? Review this
         res.cookie("jwt", token, {
             maxAge: 1 * 24 * 60 * 60, 
             httpOnly: true 
         });
-
         // Exclude the password from the response
         const { password, ...userWithoutPassword } = user.toJSON();
         // User details saved successfully.
@@ -47,33 +45,30 @@ const signup = async (req, res) => {
 const login = async (req, res) => {
   try {
     const { email, password } = req.body;
-   
     const user = await db.users.findOne({
       where: {
         email: email
       }     
     });
-   
-    //if user email is found, compare password with bcrypt
+    
     if (user) {
         const isSame = await compare(password, user.password);
-   
         // if password is the same, then generate token with the user's id and a salt.
         if (isSame) {
           let token = jwt.sign({ id: user.id }, process.env.SECRET_KEY, {
             expiresIn: 1 * 24 * 60 * 60 * 1000, // 24hr
           });
-   
           //if password matches wit the one in the database, go ahead and generate a cookie for the user
           res.cookie("jwt", token, { maxAge: 1 * 24 * 60 * 60, httpOnly: true });
-            
            // Exclude the password from the response
           const { password, ...userWithoutPassword } = user.toJSON();
           // User logged in successfully.
           return res.status(201).send({ ...userWithoutPassword, token });
         } else {
           // Password not the same as stored.
-          return res.status(401).send("Authentication failed: incorrect email or password.");
+          const auth_fail_message = "Authentication failed: incorrect email or password.";
+          console.log(auth_fail_message)
+          return res.status(401).send({"error": auth_fail_message});
         }
     } else {
       // User not found
@@ -85,6 +80,6 @@ const login = async (req, res) => {
 };
    
 export default {
-    signup,
+    register,
     login,
 };

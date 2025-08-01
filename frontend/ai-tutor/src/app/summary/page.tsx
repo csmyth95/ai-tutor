@@ -1,14 +1,15 @@
 'use client';
 import { useRouter } from 'next/navigation';
 import { ChangeEvent, useEffect, useState } from 'react';
-import axios from 'axios';
 import { Summary } from '@/models/summary';
-import backendApi from '@/util/axiosHelper';
+
+const BACKEND_URL = "http://backend:4000";
+// TODO Move this to .env file once working
 
 
 const SummaryPage = () => {
   const [summaries, setSummaries] = useState<Summary[]>([]);
-  const [selectedPDF, setSelectedPDF] = useState(null as Summary | null);
+  const [selectedPDF, setSelectedPDF] = useState<Summary | null>(null);
   const [showModal, setShowModal] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [isUploading, setIsUploading] = useState(false);
@@ -18,28 +19,63 @@ const SummaryPage = () => {
     // Fetch summaries from the backend
     const fetchSummaries = async () => {
       try {
-        const response = await backendApi.get('/api/v1/documents', {
-          headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
-        });
-        setSummaries(response.data);
+        const data = [] as Summary[]; // await fetchWithAuth('/api/v1/documents');
+        setSummaries(data || []);
       } catch (error) {
         console.error('Error fetching summaries:', error);
-        if (axios.isAxiosError(error) && error.response?.status === 401) {
-          router.push('/login'); // Redirect to login if unauthorized
+        if (error instanceof Error && error.message === 'Unauthorized') {
+          router.push('/login');
         }
       }
     };
-
     fetchSummaries();
   }, [router]);
+
+  const fetchWithAuth = async (url: string, options: RequestInit = {}) => {
+    const headers = new Headers(options.headers);
+    const token = localStorage.getItem('token');
+    if (token) {
+      headers.set('Authorization', `Basic ${token}`);
+    } else {
+      throw new Error('Unauthorized');
+    }
+    try {
+      console.log('URL call to: ', `${url}`);
+      console.log('Headers: ', headers);
+      console.log('Options: ', options);
+      console.log('Body: ', options.body);
+      const response = await fetch(url, {
+        ...options,
+        headers,
+        credentials: 'include',
+      });
+      const responseData = await response.json();
+      if (!response.ok) {
+        if (response.status === 401) {
+          router.push('/login');
+        }
+        const errorData = responseData.message || 'Something went wrong with the API call';
+        throw new Error(errorData);
+      }
+      const contentType = response.headers.get('content-type');
+      if (contentType && contentType.includes('application/json')) {
+        return responseData;
+      }
+      return null;
+    } catch (error) {
+      console.error('API call failed on SummaryPage: ', error);
+      throw error;
+    }
+  };
 
   const handleDelete = async (id: string) => {
     if (confirm('Are you sure you want to delete this summary?')) {
       try {
-        await axios.delete(`/api/v1/documents/delete/${id}`, {
-          headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
-        });
-        setSummaries(summaries.filter((summary: Summary) => summary.id !== id));
+        // TODO: Implement delete functionality
+        // await fetchWithAuth(`/api/v1/documents/delete/${id}`, {
+        //   method: 'DELETE',
+        // });
+        setSummaries(prev => prev.filter(summary => summary.id !== id));
         alert('Summary successfully deleted.');
       } catch (error) {
         console.error('Error deleting summary:', error);
@@ -55,32 +91,26 @@ const SummaryPage = () => {
   const handleUpload = async (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
-
     setIsUploading(true);
-
     const formData = new FormData();
-    formData.append('file', file);
-
+    formData.append('document', file);
     try {
-      const response = await backendApi.post(
-        '/api/v1/documents/upload',
-        formData, 
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('token')}`
-          },
-        }
-      );
-      setSummaries((prevSummaries) => [response.data, ...prevSummaries]);
-      alert('PDF uploaded successfully!');
+      const data = await fetchWithAuth(`${BACKEND_URL}/api/v1/documents/summarise`, {
+          method: 'POST',
+          body: formData,
+      });
+      if (data) {
+        setSummaries(prev => [data, ...prev]);
+        alert('PDF uploaded successfully!');
+        if (e.target) e.target.value = '';
+      }
     } catch (error) {
       console.error('Error uploading PDF:', error);
-      alert('Failed to upload PDF.');
+      alert(`Failed to upload PDF: ${error instanceof Error ? error.message : 'Unknown error'}`);
     } finally {
       setIsUploading(false);
     }
   };
-
 
   const filteredSummaries = summaries.filter((summary: Summary) =>
     summary.title.toLowerCase().includes(searchQuery.toLowerCase())
@@ -89,24 +119,6 @@ const SummaryPage = () => {
   return (
     <div className="p-6">
       <h1 className="text-2xl font-bold mb-4">Your Summaries</h1>
-
-      {/* Upload Button */}
-      <div className="mb-4">
-        <label
-          htmlFor="upload"
-          className="px-4 py-2 bg-green-500 text-white rounded cursor-pointer"
-        >
-          {isUploading ? 'Uploading...' : 'Upload New PDF'}
-        </label>
-        <input
-          id="upload"
-          type="file"
-          accept="application/pdf"
-          onChange={handleUpload}
-          className="hidden"
-        />
-      </div>
-
       {/* Search Bar */}
       {summaries.length > 0 && (
         <input
@@ -117,32 +129,27 @@ const SummaryPage = () => {
           className="w-full p-2 border border-gray-300 rounded mb-4"
         />
       )}
-
       {/* No summaries */}
       {summaries.length === 0 ? (
         <div className="text-center">
-          <p>No summaries found.</p>
           <input
-            id="upload-empty"
+            id="upload-document"
             type="file"
             accept="application/pdf"
             onChange={handleUpload}
             className="hidden"
           />
           <button
-            onClick={() => document.getElementById('upload-empty')?.click()}
+            onClick={() => document.getElementById('upload-document')?.click()}
             className="mt-4 px-4 py-2 bg-green-500 text-white rounded"
           >
-            Upload Your First Summary
+            {isUploading ? 'Uploading...' : 'Upload Your First Summary'}
           </button>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {filteredSummaries.map((summary) => (
-            <div
-              key={summary.id}
-              className="border p-4 rounded shadow hover:shadow-lg"
-            >
+            <div key={summary.id} className="border p-4 rounded shadow hover:shadow-lg">
               <h2 className="font-bold text-lg">{summary.title}</h2>
               <p className="text-sm text-gray-600">
                 {summary.summary.slice(0, 100)}...
