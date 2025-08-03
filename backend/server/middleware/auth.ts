@@ -1,13 +1,24 @@
-//importing modules
-import db from "../models/index.js";
+// Importing modules
+import { Request, Response, NextFunction } from 'express';
+import db from "../models";
 import jwt from "jsonwebtoken";
+import { User as UserType } from '../types/user.types';
 
 // Globals
 const User = db.users;
 
 // Function to check if username or email already exist in the database.
 // Avoids having two users with the same username and email.
-export const saveUser = async (req, res, next) => {
+// Extend Express Request type to include user
+declare global {
+  namespace Express {
+    interface Request {
+      user?: UserType;
+    }
+  }
+}
+
+export const saveUser = async (req: Request, res: Response, next: NextFunction) => {
  //search the database to see if user exist
   try {
     // check if email already exists
@@ -33,13 +44,13 @@ export const saveUser = async (req, res, next) => {
 };
 
 // Authentication Middleware
-export const authenticate = (req, res, next) => {
+export const authenticate = (req: Request, res: Response, next: NextFunction) => {
   const token = req.headers.authorization?.split(" ")[1];
   if (!token) return res.status(401).json({ error: "Unauthorized" });
 
-  jwt.verify(token, process.env.SECRET_KEY, (err, user) => {
+  jwt.verify(token, process.env.SECRET_KEY || 'your-secret-key', (err, user) => {
     if (err) return res.status(403).json({ error: "Forbidden" });
-    req.user = user;
+    req.user = user as UserType;
     next();
   });
 };

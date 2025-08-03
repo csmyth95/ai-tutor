@@ -10,7 +10,10 @@
   "dependencies": {
     "@aws-sdk/client-s3": "^3.832.0",
     "@huggingface/transformers": "^3.5.2",
+    "@types/bcrypt": "^6.0.0",
+    "@types/cookie-parser": "^1.4.9",
     "bcrypt": "^5.1.1",
+    "bcrypt-ts": "^7.1.0",
     "cookie-parser": "^1.4.7",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
@@ -41,10 +44,18 @@
     "@babel/core": "^7.28.0",
     "@babel/node": "^7.28.0",
     "@babel/preset-env": "^7.28.0",
+    "@types/express": "^5.0.3",
+    "@types/jsonwebtoken": "^9.0.10",
+    "@types/multer": "^2.0.0",
+    "@types/node": "^24.1.0",
     "babel-jest": "^30.0.4",
+    "eslint": "^9.32.0",
     "jest": "^30.0.4",
     "nodemon": "^3.1.9",
-    "sequelize-cli": "^6.6.3"
+    "prettier": "^3.6.2",
+    "sequelize-cli": "^6.6.3",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.2"
   },
   "babel": {
     "presets": [

@@ -1,7 +1,7 @@
 //importing modules
 import { Router } from 'express';
-import userController from '../controllers/user.js';
-import { saveUser } from '../middleware/auth.js';
+import userController from '../controllers/user';
+import { saveUser } from '../middleware/auth';
 
 const router = Router();
 const { register, login } = userController;

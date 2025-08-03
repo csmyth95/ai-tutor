@@ -61,6 +61,11 @@ Uses the jest unit test framework.
 npm test
 ```
 
+### Compile
+```bash
+npx tsc --noEmit
+```
+
 
 ## Concepts
 ### Security

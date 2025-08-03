@@ -1,9 +1,9 @@
 import express, { json, urlencoded } from 'express';
 import cookieParser from 'cookie-parser';
 
-import db from './models/index.js';
-import userRoutes from './routes/user.js';
-import documentRoutes from './routes/document.js';
+import db from './models';
+import userRoutes from './routes/user';
+import documentRoutes from './routes/document';
 
 
 //setting up your port
