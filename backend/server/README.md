@@ -54,6 +54,7 @@ curl -X POST http://localhost:4000/api/v1/documents/summarise \
 1. Dotenv: Access to env vars
 1. JsonWeb Token: Generate tokens (Optional: Use Postgres SQL instead?)
 1. CookieParser: Set cookies
+1. Prettier: Consistent code formatting across the project
 
 ### Run Unit Tests
 Uses the jest unit test framework.
@@ -66,8 +67,10 @@ npm test
 npx tsc --noEmit
 ```
 
-
 ## Concepts
+### Setup Guide
+https://blog.logrocket.com/express-typescript-node/
+
 ### Security
 * **Authentication**: determining if a user is who they claim to be.
 * **Authorization**: specifies data users can get access to in your application

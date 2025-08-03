@@ -2,8 +2,8 @@
 import { Router } from 'express';
 import multer from 'multer';
 
-import documentController from '../controllers/document';
-import { authenticate } from '../middleware/auth';
+import documentController from '../controllers/document.js';
+import { authenticate } from '../middleware/auth.js';
 
 // Multer docs: https://www.npmjs.com/package/multer
 const upload = multer({ dest: 'uploads/' });

@@ -1,15 +1,20 @@
 import { createHash } from "crypto";
-import { Op } from "sequelize";
 import { Request, Response, NextFunction } from 'express';
 import fs from "fs";
 import path from "path";
 
-import LocalLLM from "../services/LocalLLM";
-import Document from "../models/document";
-import { SummariseDocumentResponse } from "../types/document.types";
-import { ErrorResponse } from "../types/generic.types";
+import LocalLLM from "../services/LocalLLM.js";
+import db from "../models/index.js";
+import { SummariseDocumentResponse } from "../types/document.types.js";
+import { ErrorResponse } from "../types/generic.types.js";
 
-const localLLM = new LocalLLM();
+
+let localLLM: LocalLLM;
+try{
+  localLLM = new LocalLLM();
+} catch (Error) {
+  console.error("Failed to initialize LocalLLM: " + Error);
+}
 
 
 const summarise_document = async (req: Request, res: Response, next: NextFunction) => {
@@ -100,7 +105,7 @@ const get_user_documents = async (req: Request, res: Response) => {
     }
 
     // Fetch all documents for the user from Postgres
-    const documents = await Document.findAll({ where: { userId: user.id } });
+    const documents = await db.documents.findAll({ where: { ownerId: user.id } });
     if (!documents || documents.length === 0) {
       return res.status(404).json({ error: "No documents found for this user." });
     }

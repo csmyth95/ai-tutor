@@ -1,8 +1,7 @@
-import { User } from "../models/user";
-
-
+// TODO Need to send the user's ID in the request 
+// so needs to be saved in Cookies or localStorage on the login.
 interface SummariseDocumentRequest {
-  user: User;
+  userId: number;
   file: File;
 }
 

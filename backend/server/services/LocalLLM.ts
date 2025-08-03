@@ -1,16 +1,18 @@
 import { Ollama } from 'ollama'
+import { config } from '../config/config.js';
 
 
 class LocalLLM {
     ollama: Ollama;
     model: string;
+    host: string;
     /**
      * Initialize the LocalLLM client
-     * @param {string} host - Base URL of the Ollama API (default: http://localhost:11434)
      * @param {string} model - The model to use for text generation (default: 'llama2')
      */
-    constructor(host: string = 'http://llm:11434', model: string = 'gemma3:1b') {
-        this.ollama = new Ollama({ host: host });
+    constructor(model: string = 'gemma3:1b') {
+        this.host = config.llmHost;
+        this.ollama = new Ollama({ host: this.host });
         this.model = model;
         this._initializeModel();
     }
@@ -29,7 +31,6 @@ class LocalLLM {
         } catch (error) {
             const message = `Failed to initialize model ${this.model}: ${error}`;
             console.error(message);
-            throw new Error(message);
         }
     }
 

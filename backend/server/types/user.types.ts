@@ -1,6 +1,9 @@
 // User data returned by the API on successful registration/login
 interface User {
-  id: string;
+  id: number;
+  email: string;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 // Response format for successful registration

@@ -1,11 +1,14 @@
 import { hash, compare } from "bcrypt-ts";
-import db from "../models/index";
-import { sign, Secret } from "jsonwebtoken";
-import { User, RegisterResponse } from "../types/user.types";
+import db from "../models/index.js";
+import jwt from 'jsonwebtoken';   
+import { Secret } from "jsonwebtoken";
+import { User, RegisterResponse } from "../types/user.types.js";
 import { NextFunction, Request, Response } from "express";
 
 // Globals
 const SECRET_KEY = process.env.SECRET_KEY;
+const { sign } = jwt;
+
 
 const register = async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -15,7 +18,20 @@ const register = async (req: Request, res: Response, next: NextFunction) => {
         password: await hash(password, 10),
     };
     // Saving the user
-    const user = await db.users.create(data);
+    const user = await db.users.create(
+      {
+        email: email,
+        password: await hash(password, 10),
+      },
+      {
+        include: [
+          {
+            association: db.userDocuments,
+            as: 'userDocuments', 
+          }
+        ],
+      }
+    );
 
     //if user details is captured:
     //  1. generate token with the user's id and a salt.
@@ -37,7 +53,6 @@ const register = async (req: Request, res: Response, next: NextFunction) => {
         // Exclude the password from the response
         const { password, ...userWithoutPassword } = user.toJSON();
         const userModel: User = userWithoutPassword;
-        // User details saved successfully.
         const response: RegisterResponse = {
           user: userModel,
           message: 'User registered successfully'

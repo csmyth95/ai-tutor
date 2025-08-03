@@ -1,8 +1,8 @@
 // Importing modules
 import { Request, Response, NextFunction } from 'express';
-import db from "../models";
+import db from "../models/index.js";
 import jwt from "jsonwebtoken";
-import { User as UserType } from '../types/user.types';
+import { User as UserType } from '../types/user.types.js';
 
 // Globals
 const User = db.users;

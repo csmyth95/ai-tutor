@@ -9,13 +9,17 @@ COPY package.json ./
 COPY package-lock.json ./
 
 # Install dependencies
-RUN npm ci --only=production
+# RUN npm ci --only=production
+RUN npm install
 
 # Copy the rest of the application code to the working directory
 COPY . .
+
+# Build the application
+RUN npm run build
 
 # Expose the port the app runs on
 EXPOSE 4000
 
 # Define the command to run the app
-CMD ["node", "server.js"]
+CMD ["npm", "run", "start"]
