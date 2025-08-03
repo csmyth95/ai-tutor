@@ -7,3 +7,8 @@ node_modules/
 
 # Exclude database/tables for now as not needed.
 /database/tables/
+
+# Exclude NodeJS / TypeScript build files
+/backend/server/dist/
+/backend/server/build/
+
