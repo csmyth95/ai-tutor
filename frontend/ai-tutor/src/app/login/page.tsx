@@ -4,8 +4,8 @@ import Link from 'next/link';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 
-const BACKEND_URL = "http://localhost:4000";
-// TODO Move this to .env file once working
+const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:4000";
+
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
