@@ -4,8 +4,8 @@ import Link from 'next/link';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 
-const BACKEND_URL = "http://backend:4000";
-// TODO Move this to .env file once working
+const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:4000";
+
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
@@ -36,8 +36,7 @@ export default function LoginPage() {
             throw new Error('Login failed. Please check your credentials: ', errorData);
       }
       const dataText = await response.text();
-      console.log(dataText);
-      const data = await response.json();
+      const data = JSON.parse(dataText);
       if (data.token) {
         try {
           localStorage.setItem('token', data.token);
@@ -48,10 +47,10 @@ export default function LoginPage() {
           alert(error instanceof Error ? error.message : 'An error occurred during login');
         }
       } else {
-        throw new Error('No token received from server');
+        throw new Error(`No token received from server: ${data}`);
       }
     } catch (error) {
-      console.error('Login error:', error);
+      console.error(`Login error:, ${error}`);
       alert(error instanceof Error ? error.message : 'An error occurred during login');
     }
   };

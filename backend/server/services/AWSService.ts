@@ -1,18 +1,20 @@
- // TODO Verify with real AWS docs & test
+// https://github.com/aws/aws-sdk-js-v3/tree/main/clients/client-s3
 import { S3Client, PutObjectCommand, GetObjectCommand, DeleteObjectCommand } from "@aws-sdk/client-s3"; 
 
 
+
 class AWSService {
+  s3: S3Client;
+  bucketName: string;
+
   constructor() {
     this.s3 = new S3Client({
-      accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-      secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
       region: process.env.AWS_REGION,
     });
     this.bucketName = process.env.AWS_S3_BUCKET_NAME || "muinteoir-ai-user-uploaded-documents";
   }
 
-  async uploadToS3(key, body) {
+  async uploadToS3(key: string, body: string) {
     try {
       const params = {
         Bucket: this.bucketName,
@@ -33,7 +35,7 @@ class AWSService {
     }
   }
 
-  async objectExists(key) {
+  async objectExists(key: string) {
     try {
       const command = new GetObjectCommand({
         Bucket: this.bucketName,
@@ -47,15 +49,12 @@ class AWSService {
         return false; // Object does not exist
       }
     } catch (error) {
-      if (error.code === "NotFound") {
-        return false; // Object does not exist
-      }
-      console.error("Error checking object existence in S3:", error);
-      throw error;
+      console.error("Error checking object existence in S3 - default to false:", error);
+      return false;
     }
   }
 
-  async deleteFromS3(key) {
+  async deleteFromS3(key: string) {
     try {
       const command = new DeleteObjectCommand({ Bucket: this.bucketName, Key: key });
       await this.s3.send(command);
