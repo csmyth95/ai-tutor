@@ -1,9 +1,6 @@
 node_modules/
 .idea/
 
-# Ignore dist/
-backend/server/dist/
-
 # Ignore environment variable files
 **.env**
 !local.env
@@ -14,4 +11,3 @@ backend/server/dist/
 # Exclude NodeJS / TypeScript build files
 /backend/server/dist/
 /backend/server/build/
-

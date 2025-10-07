@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
-const BACKEND_URL = "http://backend:4000";
+const BACKEND_URL = "http://localhost:4000";
 // TODO Move this to .env file once working
 
 export default function RegisterPage() {
@@ -59,10 +59,10 @@ export default function RegisterPage() {
             } catch (e) {
               console.warn('Failed to parse error response:', e);
             }
-            throw new Error('Registration failed. Please try again: ', errorData);        
+            throw new Error(`Registration failed. Please try again: ${JSON.stringify(errorData)}`);        
           }
         } catch (error) {
-          console.error('Registration failed:', error);
+          console.error(`Registration failed: ${JSON.stringify(error)}`);
           alert(error instanceof Error ? error.message : 'Registration failed. Please try again.');
         }
       }

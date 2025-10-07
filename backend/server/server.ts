@@ -1,5 +1,6 @@
-import express, { json, urlencoded } from 'express';
+import express, { json, urlencoded, Request } from 'express';
 import cookieParser from 'cookie-parser';
+import cors from 'cors';
 
 import config from './config/config.js';
 import db from './models/index.js';
@@ -15,6 +16,14 @@ const app = express();
 app.use(json());
 app.use(urlencoded({ extended: true }));
 app.use(cookieParser());
+// Enable CORS with specific origin
+// TODO Update production URL when deployment is ready.
+app.use(cors<Request>({
+  origin: process.env.NODE_ENV === 'production' 
+    ? 'https://your-production-domain.com' 
+    : 'http://localhost:3000', // Your frontend URL
+  credentials: true
+}));
 
 // TODO Remove force True when deploying fully
 // Synchronise the database and force it to false so we dont lose data
