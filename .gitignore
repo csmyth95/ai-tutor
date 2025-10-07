@@ -1,6 +1,9 @@
 node_modules/
 .idea/
 
+# Ignore dist/
+backend/server/dist/
+
 # Ignore environment variable files
 **.env**
 !local.env
