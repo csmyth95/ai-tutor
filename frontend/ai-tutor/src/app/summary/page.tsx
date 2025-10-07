@@ -3,7 +3,7 @@ import { useRouter } from 'next/navigation';
 import { ChangeEvent, useEffect, useState } from 'react';
 import { Summary } from '@/models/summary';
 
-const BACKEND_URL = "http://backend:4000";
+const BACKEND_URL = "http://localhost:4000";
 // TODO Move this to .env file once working
 
 
