@@ -1,6 +1,6 @@
 services:
   frontend:
-    build: 
+    build:
       context: ./frontend/ai-tutor
       dockerfile: Dockerfile
     ports:
@@ -8,13 +8,15 @@ services:
     env_file:
       - ./frontend/local.env
     depends_on:
-      - postgres
-      - backend
+      postgres:
+        condition: service_healthy
+      backend:
+        condition: service_started
     networks:
       - app-network
 
   backend:
-    build: 
+    build:
       context: ./backend/server
       dockerfile: Dockerfile
     ports:
@@ -22,8 +24,10 @@ services:
     env_file:
       - ./backend/server/local.env
     depends_on:
-      - postgres
-      - llm
+      postgres:
+        condition: service_healthy
+      llm:
+        condition: service_started
     networks:
       - app-network
 
@@ -40,6 +44,11 @@ services:
     networks:
       - app-network
     restart: always
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
   
   llm:
     image: ollama/ollama:latest

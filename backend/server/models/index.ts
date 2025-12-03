@@ -151,21 +151,7 @@ const db = {
   documents: Document,
   userDocuments: UserDocuments,
 };
-try {
-    db.sequelize.authenticate()
-      .then(() => {
-        console.log(`Connected to Postgres database: ${process.env.POSTGRES_DB}`);
-      })
-      .catch((error) => {
-        console.error('Unable to connect to the database:', error);
-        process.exit(1);
-      });
-    
-    db.sequelize.sync();
-} catch (error) {
-  console.error('Failed to initialize database:', error);
-  process.exit(1);
-}
+// Note: sync() is called in server.ts, not here, to avoid duplicate sync race conditions
 
 export { db };
 export default db;

@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import './globals.css';
 import Link from 'next/link';
 import { PostHogProvider } from "../components/PostHogProvider";
+import { BrainIcon } from "@/components/icons";
 
 export const metadata: Metadata = {
   title: 'MuinteoirAI - Your Personal Learning Assistant',
@@ -15,23 +16,30 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className="min-h-screen bg-black text-white flex flex-col">
+      <body className="min-h-screen bg-white text-gray-900 flex flex-col">
         <PostHogProvider>
-          <header className="fixed top-0 left-0 right-0 z-50 bg-black/80 backdrop-blur-md border-b border-green-500/20">
-            <nav className="container mx-center">
-              <div className="flex justify-between w-full max-w-4xl">
-                <div>
-                  <Link href="/" className="text-gray-300 hover:text-green-400 transition-colors">
-                    Home
-                  </Link>
-                </div>
-                <div>
-                  <Link href="/login" className="text-gray-300 hover:text-green-400 transition-colors">
+          {/* Sticky Header */}
+          <header className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-100">
+            <nav className="section-container">
+              <div className="flex justify-between items-center h-16">
+                {/* Logo */}
+                <Link href="/" className="flex items-center gap-2">
+                  <BrainIcon className="w-8 h-8 text-green-500" />
+                  <span className="text-xl font-bold text-gray-900">MuinteoirAI</span>
+                </Link>
+
+                {/* Navigation buttons */}
+                <div className="flex items-center gap-3">
+                  <Link
+                    href="/login"
+                    className="btn-secondary py-2 px-5"
+                  >
                     Login
                   </Link>
-                </div>
-                <div>
-                  <Link href="/register" className="text-gray-300 hover:text-green-400 transition-colors">
+                  <Link
+                    href="/register"
+                    className="btn-primary py-2 px-5"
+                  >
                     Register
                   </Link>
                 </div>
@@ -39,14 +47,22 @@ export default function RootLayout({
             </nav>
           </header>
 
-          <main className="flex-1 flex flex-col items-center justify-center pt-20">
+          {/* Main content with top padding for fixed header */}
+          <main className="flex-1 pt-16">
             {children}
           </main>
 
-          <footer className="bg-black/80 backdrop-blur-md border-t border-green-500/20">
-            <div className="container mx-auto px-4 py-8">
-              <div className="flex justify-between items-center">
-                <p className="text-gray-400">© 2025 MuinteoirAI. All rights reserved.</p>
+          {/* Dark Footer */}
+          <footer className="bg-[#1a1a2e] text-white">
+            <div className="section-container py-10">
+              <div className="flex flex-col items-center text-center">
+                <div className="flex items-center gap-2 mb-4">
+                  <BrainIcon className="w-6 h-6 text-green-500" />
+                  <span className="text-lg font-bold">MuinteoirAI</span>
+                </div>
+                <p className="text-gray-400 text-sm">
+                  © 2025 MuinteoirAI. Empowering learners with artificial intelligence.
+                </p>
               </div>
             </div>
           </footer>
