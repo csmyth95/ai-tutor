@@ -25,16 +25,6 @@ app.use(cors<Request>({
   credentials: true
 }));
 
-// TODO Remove force True when deploying fully
-// Synchronise the database and force it to false so we dont lose data
-try {
-db.sequelize.sync({ force: false }).then(() => {
-  console.log("Sequilize has been re synced with db.")
-});
-} catch (error) {
-  console.error("Failed to sync database: " + error);
-}
-
 //routes for the user API
 app.use('/api/v1/users', userRoutes);
 app.use('/api/v1/documents', documentRoutes);
@@ -42,7 +32,22 @@ app.use('/api/v1/documents', documentRoutes);
 // Error handler middleware
 app.use(errorHandler);
 
-//listening to server connection
-app.listen(config.port, () => {
-  console.log(`Server running on port ${config.port}`);
-});
+// Initialize database and start server
+async function startServer() {
+  try {
+    await db.sequelize.authenticate();
+    console.log(`Connected to Postgres database: ${process.env.POSTGRES_DB}`);
+
+    await db.sequelize.sync({ force: false });
+    console.log("Sequelize has been synced with db.");
+
+    app.listen(config.port, () => {
+      console.log(`Server running on port ${config.port}`);
+    });
+  } catch (error) {
+    console.error("Failed to initialize database:", error);
+    process.exit(1);
+  }
+}
+
+startServer();
