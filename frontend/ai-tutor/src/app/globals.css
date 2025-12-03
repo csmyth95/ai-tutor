@@ -1,6 +1,4 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
 
 @layer base {
   html {
@@ -10,8 +8,80 @@
   }
 }
 
+@layer components {
+  /* Primary button - green filled */
+  .btn-primary {
+    background-color: #22c55e;
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.5rem;
+    font-weight: 600;
+    transition: background-color 0.2s;
+  }
+
+  .btn-primary:hover {
+    background-color: #16a34a;
+  }
+
+  /* Secondary button - outlined */
+  .btn-secondary {
+    border: 1px solid #d1d5db;
+    background-color: white;
+    color: #374151;
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.5rem;
+    font-weight: 600;
+    transition: border-color 0.2s;
+  }
+
+  .btn-secondary:hover {
+    border-color: #9ca3af;
+  }
+
+  /* Feature card styling */
+  .feature-card {
+    background-color: white;
+    border-radius: 1rem;
+    padding: 2rem;
+    box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+    transition: box-shadow 0.3s;
+  }
+
+  .feature-card:hover {
+    box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+  }
+
+  /* Section container */
+  .section-container {
+    max-width: 72rem;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  @media (min-width: 640px) {
+    .section-container {
+      padding-left: 1.5rem;
+      padding-right: 1.5rem;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .section-container {
+      padding-left: 2rem;
+      padding-right: 2rem;
+    }
+  }
+
+  /* Gradient background for main page */
+  .bg-gradient-mint {
+    background: linear-gradient(to bottom, #f0fdf4 0%, #f0fdf4 30%, #ffffff 100%);
+  }
+}
+
 @layer utilities {
   .text-balance {
     text-wrap: balance;
   }
-} 
+}
