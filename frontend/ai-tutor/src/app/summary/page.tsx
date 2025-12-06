@@ -8,10 +8,11 @@ const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:400
 
 const SummaryPage = () => {
   const [summaries, setSummaries] = useState<Summary[]>([]);
-  const [selectedPDF, setSelectedPDF] = useState<Summary | null>(null);
+  const [selectedDocument, setSelectedDocument] = useState<Summary | null>(null);
   const [showModal, setShowModal] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [isUploading, setIsUploading] = useState(false);
+  const [quizLoading, setQuizLoading] = useState<string | null>(null);
   const router = useRouter();
 
   useEffect(() => {
@@ -89,6 +90,29 @@ const SummaryPage = () => {
   const handleUpload = async (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
+
+    // Validation
+    const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
+
+    const allowedTypes = ['text/plain', 'text/markdown'];
+    if (!allowedTypes.includes(file.type)) {
+      alert('Invalid file type. Please upload a text document (.txt or .md).');
+      e.target.value = '';
+      return;
+    }
+
+    if (file.size > MAX_FILE_SIZE) {
+      alert('File too large. Maximum size is 10MB.');
+      e.target.value = '';
+      return;
+    }
+
+    if (file.name.includes('..') || file.name.includes('/') || file.name.includes('\\')) {
+      alert('Invalid file name.');
+      e.target.value = '';
+      return;
+    }
+
     setIsUploading(true);
     const formData = new FormData();
     formData.append('document', file);
@@ -102,10 +126,25 @@ const SummaryPage = () => {
         if (e.target) e.target.value = '';
       }
     } catch (error) {
-      console.error('Error uploading PDF:', error);
-      alert(`Failed to upload PDF: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      console.error('Error uploading document:', error);
+      alert(`Failed to upload document: ${error instanceof Error ? error.message : 'Unknown error'}`);
     } finally {
       setIsUploading(false);
+    }
+  };
+
+  const handleCreateQuiz = async (documentId: string) => {
+    setQuizLoading(documentId);
+    try {
+      await fetchWithAuth(`${BACKEND_URL}/api/v1/quizzes/documents/${documentId}`, {
+        method: 'POST',
+      });
+      router.push(`/quiz/${documentId}`);
+    } catch (error) {
+      console.error('Error creating quiz:', error);
+      alert(`Failed to create quiz: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    } finally {
+      setQuizLoading(null);
     }
   };
 
@@ -121,7 +160,7 @@ const SummaryPage = () => {
       <input
         id="upload-document"
         type="file"
-        accept="application/pdf"
+        accept=".txt,.md,text/plain,text/markdown"
         onChange={handleUpload}
         className="hidden"
       />
@@ -131,7 +170,7 @@ const SummaryPage = () => {
         <div className="flex justify-center mb-6">
           <input
             type="text"
-            placeholder="Search PDFs..."
+            placeholder="Search documents..."
             value={searchQuery}
             onChange={handleSearch}
             className="w-full max-w-md p-2 border border-gray-300 rounded"
@@ -158,7 +197,7 @@ const SummaryPage = () => {
             onClick={() => document.getElementById('upload-document')?.click()}
             className="px-6 py-3 bg-green-500 hover:bg-green-600 text-white rounded-lg font-semibold transition-colors"
           >
-            {isUploading ? 'Uploading...' : 'Upload Your First Summary'}
+            {isUploading ? 'Uploading...' : 'Upload your first document'}
           </button>
         </div>
       ) : (
@@ -172,7 +211,7 @@ const SummaryPage = () => {
               <div className="flex flex-wrap gap-2 mt-6 justify-center">
                 <button
                   onClick={() => {
-                    setSelectedPDF(summary);
+                    setSelectedDocument(summary);
                     setShowModal(true);
                   }}
                   className="px-4 py-2 bg-blue-500 text-white rounded"
@@ -180,10 +219,15 @@ const SummaryPage = () => {
                   View Summary
                 </button>
                 <button
-                  onClick={() => {}}
-                  className="px-4 py-2 bg-yellow-500 text-white rounded"
+                  onClick={() => handleCreateQuiz(summary.id)}
+                  disabled={quizLoading === summary.id}
+                  className={`px-4 py-2 text-white rounded ${
+                    quizLoading === summary.id
+                      ? 'bg-yellow-300 cursor-not-allowed'
+                      : 'bg-yellow-500 hover:bg-yellow-600'
+                  }`}
                 >
-                  Create Quiz
+                  {quizLoading === summary.id ? 'Creating...' : 'Create Quiz'}
                 </button>
                 <button
                   onClick={() => handleDelete(summary.id)}
@@ -197,11 +241,11 @@ const SummaryPage = () => {
         </div>
       )}
 
-      {showModal && selectedPDF && (
+      {showModal && selectedDocument && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
           <div className="bg-white p-6 rounded shadow-lg w-3/4 max-h-[80vh] overflow-y-auto">
-            <h2 className="text-xl font-bold mb-4">{selectedPDF.title}</h2>
-            <p>{selectedPDF.summary}</p>
+            <h2 className="text-xl font-bold mb-4">{selectedDocument.title}</h2>
+            <p>{selectedDocument.summary}</p>
             <button
               onClick={() => setShowModal(false)}
               className="mt-4 px-4 py-2 bg-gray-500 text-white rounded"

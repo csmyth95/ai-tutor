@@ -1,8 +1,16 @@
-import { Model, InferAttributes, InferCreationAttributes, CreationOptional, DataTypes, HasManyGetAssociationsMixin, 
-    HasManyAddAssociationMixin, HasManyAddAssociationsMixin, HasManySetAssociationsMixin, HasManyRemoveAssociationMixin, 
-    HasManyRemoveAssociationsMixin, HasManyHasAssociationMixin, HasManyHasAssociationsMixin, 
-    HasManyCountAssociationsMixin, HasManyCreateAssociationMixin, ForeignKey , Sequelize } from 'sequelize';
+import { Model, InferAttributes, InferCreationAttributes, CreationOptional, DataTypes, HasManyGetAssociationsMixin,
+    HasManyAddAssociationMixin, HasManyAddAssociationsMixin, HasManySetAssociationsMixin, HasManyRemoveAssociationMixin,
+    HasManyRemoveAssociationsMixin, HasManyHasAssociationMixin, HasManyHasAssociationsMixin,
+    HasManyCountAssociationsMixin, HasManyCreateAssociationMixin, ForeignKey, HasOneGetAssociationMixin,
+    HasOneSetAssociationMixin, HasOneCreateAssociationMixin, Sequelize } from 'sequelize';
 import config from '../config/config.js';
+
+// Question interface for quiz questions
+export interface Question {
+    questionText: string;
+    options: [string, string, string, string];
+    correctAnswerIndex: number;
+}
 
 // Define the database interface
 export interface Database {
@@ -10,6 +18,7 @@ export interface Database {
     Sequelize: typeof Sequelize;
     users: typeof User;
     documents: typeof Document;
+    quizzes: typeof Quiz;
 }
 
 // Initialize Sequelize with database connection
@@ -85,6 +94,11 @@ class Document extends Model<InferAttributes<Document>, InferCreationAttributes<
   declare tags: string[] | null;
   declare createdAt: Date;
   declare updatedAt: Date;
+
+  // Quiz association
+  declare getQuiz: HasOneGetAssociationMixin<Quiz>;
+  declare setQuiz: HasOneSetAssociationMixin<Quiz, number>;
+  declare createQuiz: HasOneCreateAssociationMixin<Quiz>;
 }
 
 Document.init(
@@ -143,15 +157,70 @@ const UserDocuments = User.hasMany(Document, {
   as: 'documents',
 });
 
+// Quiz Model
+class Quiz extends Model<InferAttributes<Quiz>, InferCreationAttributes<Quiz>> {
+  declare id: CreationOptional<number>;
+  declare documentId: ForeignKey<Document['id']>;
+  declare questions: Question[];
+  declare createdAt: CreationOptional<Date>;
+  declare updatedAt: CreationOptional<Date>;
+}
+
+Quiz.init(
+  {
+    id: {
+      type: DataTypes.INTEGER,
+      autoIncrement: true,
+      allowNull: false,
+      primaryKey: true,
+    },
+    documentId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      unique: true,
+    },
+    questions: {
+      type: DataTypes.JSONB,
+      allowNull: false,
+    },
+    createdAt: {
+      type: DataTypes.DATE,
+      allowNull: false,
+    },
+    updatedAt: {
+      type: DataTypes.DATE,
+      allowNull: false,
+    },
+  },
+  {
+    sequelize: sequelize,
+    modelName: 'quiz',
+    timestamps: true,
+  }
+);
+
+// Quiz associations
+Quiz.belongsTo(Document, {
+  foreignKey: 'documentId',
+  as: 'document',
+  onDelete: 'CASCADE',
+});
+
+Document.hasOne(Quiz, {
+  sourceKey: 'id',
+  foreignKey: 'documentId',
+  as: 'quiz',
+});
 
 const db = {
   sequelize,
   Sequelize,
   users: User,
   documents: Document,
+  quizzes: Quiz,
   userDocuments: UserDocuments,
 };
 // Note: sync() is called in server.ts, not here, to avoid duplicate sync race conditions
 
-export { db };
+export { db, Quiz };
 export default db;

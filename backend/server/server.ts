@@ -6,6 +6,7 @@ import config from './config/config.js';
 import db from './models/index.js';
 import userRoutes from './routes/user.js';
 import documentRoutes from './routes/document.js';
+import quizRoutes from './routes/quiz.js';
 import { errorHandler } from './middleware/errorHandler.js';
 
 
@@ -28,6 +29,7 @@ app.use(cors<Request>({
 //routes for the user API
 app.use('/api/v1/users', userRoutes);
 app.use('/api/v1/documents', documentRoutes);
+app.use('/api/v1/quizzes', quizRoutes);
 
 // Error handler middleware
 app.use(errorHandler);

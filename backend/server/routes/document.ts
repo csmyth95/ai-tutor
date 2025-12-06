@@ -14,5 +14,4 @@ const router = Router();
 router.post('/summarise', authenticate, upload.single('document'), documentController.summarise_document);
 router.get("/", authenticate, documentController.get_user_documents);
 
-
 export default router;
