@@ -118,42 +118,60 @@ const SummaryPage = () => {
   return (
     <div className="section-container py-8">
       <h1 className="text-3xl font-bold mb-6 text-center">Your Summaries</h1>
+
+      {/* Hidden file input - always available */}
+      <input
+        id="upload-document"
+        type="file"
+        accept="application/pdf"
+        onChange={handleUpload}
+        className="hidden"
+      />
+
       {/* Search Bar */}
       {summaries.length > 0 && (
-        <input
-          type="text"
-          placeholder="Search PDFs..."
-          value={searchQuery}
-          onChange={handleSearch}
-          className="w-full max-w-md mx-auto p-2 border border-gray-300 rounded mb-6"
-        />
+        <div className="flex justify-center mb-6">
+          <input
+            type="text"
+            placeholder="Search PDFs..."
+            value={searchQuery}
+            onChange={handleSearch}
+            className="w-full max-w-md p-2 border border-gray-300 rounded"
+          />
+        </div>
       )}
+
+      {/* Upload button - shown when summaries exist */}
+      {summaries.length > 0 && (
+        <div className="flex justify-center mb-8">
+          <button
+            onClick={() => document.getElementById('upload-document')?.click()}
+            className="px-6 py-3 bg-green-500 hover:bg-green-600 text-white rounded-lg font-semibold transition-colors"
+          >
+            {isUploading ? 'Uploading...' : 'Upload New Summary'}
+          </button>
+        </div>
+      )}
+
       {/* No summaries */}
       {summaries.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-12">
-          <input
-            id="upload-document"
-            type="file"
-            accept="application/pdf"
-            onChange={handleUpload}
-            className="hidden"
-          />
           <button
             onClick={() => document.getElementById('upload-document')?.click()}
-            className="mt-4 px-4 py-2 bg-green-500 text-white rounded"
+            className="px-6 py-3 bg-green-500 hover:bg-green-600 text-white rounded-lg font-semibold transition-colors"
           >
             {isUploading ? 'Uploading...' : 'Upload Your First Summary'}
           </button>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 justify-items-center">
+        <div className="flex flex-wrap justify-center gap-6">
           {filteredSummaries.map((summary) => (
-            <div key={summary.id} className="border p-4 rounded shadow hover:shadow-lg">
+            <div key={summary.id} className="w-full max-w-sm border p-6 rounded-lg shadow hover:shadow-lg flex-shrink-0">
               <h2 className="font-bold text-lg">{summary.title}</h2>
               <p className="text-sm text-gray-600">
                 {summary.summary.slice(0, 100)}...
               </p>
-              <div className="flex justify-between mt-4">
+              <div className="flex flex-wrap gap-2 mt-6 justify-center">
                 <button
                   onClick={() => {
                     setSelectedPDF(summary);
@@ -164,7 +182,6 @@ const SummaryPage = () => {
                   View Summary
                 </button>
                 <button
-                  // TODO Alternative: use react-toastify for better UX
                   onClick={() => alert('This feature is not implemented yet.')}
                   className="px-4 py-2 bg-yellow-500 text-white rounded"
                 >
