@@ -40,7 +40,6 @@ export default function LoginPage() {
       if (data.token) {
         try {
           localStorage.setItem('token', data.token);
-          alert('Login successful & token stashed in localStorage!')
           router.push('/summary');
         } catch (error) {
           console.error('Error setting token:', error);
