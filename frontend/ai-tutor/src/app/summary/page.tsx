@@ -75,7 +75,6 @@ const SummaryPage = () => {
         //   method: 'DELETE',
         // });
         setSummaries(prev => prev.filter(summary => summary.id !== id));
-        alert('Summary successfully deleted.');
       } catch (error) {
         console.error('Error deleting summary:', error);
         alert('Failed to delete summary.');
@@ -100,7 +99,6 @@ const SummaryPage = () => {
       });
       if (data) {
         setSummaries(prev => [data, ...prev]);
-        alert('PDF uploaded successfully!');
         if (e.target) e.target.value = '';
       }
     } catch (error) {
@@ -182,7 +180,7 @@ const SummaryPage = () => {
                   View Summary
                 </button>
                 <button
-                  onClick={() => alert('This feature is not implemented yet.')}
+                  onClick={() => {}}
                   className="px-4 py-2 bg-yellow-500 text-white rounded"
                 >
                   Create Quiz
