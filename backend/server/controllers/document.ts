@@ -8,6 +8,9 @@ import db from "../models/index.js";
 import { SummariseDocumentResponse } from "../types/document.types.js";
 import { ErrorResponse } from "../types/generic.types.js";
 
+// Upload directory must match the multer config in routes/document.ts
+const UPLOAD_DIR = path.resolve('uploads');
+
 // Timeout utility for LLM calls
 const withTimeout = <T>(promise: Promise<T>, ms: number, operation: string): Promise<T> => {
   const timeout = new Promise<never>((_, reject) =>
@@ -127,9 +130,15 @@ const summarise_document = async (req: Request, res: Response, _next: NextFuncti
     return res.status(500).json({ error: 'An unexpected error occurred while processing the document.' });
   } finally {
     // Always clean up temp file
-    if (filePath && fs.existsSync(filePath)) {
+    if (filePath) {
       try {
-        fs.unlinkSync(filePath);
+        // Resolve to absolute path and validate it's within the upload directory
+        const resolvedPath = path.resolve(filePath);
+        if (!resolvedPath.startsWith(UPLOAD_DIR + path.sep)) {
+          console.error('Security: Attempted to delete file outside upload directory:', resolvedPath);
+        } else if (fs.existsSync(resolvedPath)) {
+          fs.unlinkSync(resolvedPath);
+        }
       } catch (cleanupError) {
         console.error('Failed to cleanup temp file:', cleanupError);
       }
