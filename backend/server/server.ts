@@ -1,6 +1,7 @@
 import express, { json, urlencoded, Request } from 'express';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
+import helmet from 'helmet';
 
 import config from './config/config.js';
 import db from './models/index.js';
@@ -17,6 +18,21 @@ const app = express();
 app.use(json());
 app.use(urlencoded({ extended: true }));
 app.use(cookieParser());
+// Security headers
+app.use(helmet({
+  contentSecurityPolicy: {
+    directives: {
+      defaultSrc: ["'self'"],
+      scriptSrc: ["'self'"],
+      styleSrc: ["'self'", "'unsafe-inline'"],
+      imgSrc: ["'self'", "data:", "https:"],
+      connectSrc: ["'self'"],
+      fontSrc: ["'self'"],
+      objectSrc: ["'none'"],
+      frameAncestors: ["'none'"],
+    },
+  },
+}));
 // Enable CORS with specific origin
 // TODO Update production URL when deployment is ready.
 app.use(cors<Request>({
