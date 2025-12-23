@@ -18,7 +18,7 @@ const summariseLimiter = rateLimit({
 // Routes
 const router = Router();
 // NOTE: Param 'document' here should be the same as in the calling request.
-router.post('/summarise', authenticate, summariseLimiter, upload.single('document'), documentController.summarise_document);
-router.get("/", authenticate, documentController.get_user_documents);
+router.post('/summarise', summariseLimiter, authenticate, upload.single('document'), documentController.summarise_document);
+router.get("/", summariseLimiter, authenticate, documentController.get_user_documents);
 
 export default router;
