@@ -1,8 +1,8 @@
 import type { Metadata } from 'next';
 import './globals.css';
-import Link from 'next/link';
 import { PostHogProvider } from "../components/PostHogProvider";
 import { BrainIcon } from "@/components/icons";
+import Header from "@/components/Header";
 
 export const metadata: Metadata = {
   title: 'MuinteoirAI - Your Personal Learning Assistant',
@@ -18,34 +18,7 @@ export default function RootLayout({
     <html lang="en">
       <body className="min-h-screen bg-white text-gray-900 flex flex-col">
         <PostHogProvider>
-          {/* Sticky Header */}
-          <header className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-100">
-            <nav className="section-container">
-              <div className="flex justify-between items-center h-16">
-                {/* Logo */}
-                <Link href="/" className="flex items-center gap-2">
-                  <BrainIcon className="w-8 h-8 text-green-500" />
-                  <span className="text-xl font-bold text-gray-900">MuinteoirAI</span>
-                </Link>
-
-                {/* Navigation buttons */}
-                <div className="flex items-center gap-3">
-                  <Link
-                    href="/login"
-                    className="btn-secondary py-2 px-5"
-                  >
-                    Login
-                  </Link>
-                  <Link
-                    href="/register"
-                    className="btn-primary py-2 px-5"
-                  >
-                    Register
-                  </Link>
-                </div>
-              </div>
-            </nav>
-          </header>
+          <Header />
 
           {/* Main content with top padding for fixed header */}
           <main className="flex-1 pt-16">

@@ -1,5 +1,6 @@
 import { Ollama } from 'ollama'
 import { config } from '../config/config.js';
+import { Question } from '../types/quiz.types.js';
 
 
 class LocalLLM {
@@ -42,7 +43,7 @@ class LocalLLM {
      */
     async summarise(text: string, maxLength: number = 150) {
         try {
-            const prompt = `Create a short, concise summary of the following text, keeping it under ${maxLength} characters and return nothing else. No pleasantries. Text: ${text}`;
+            const prompt = `Create a summary of the following text, keeping it under ${maxLength} characters and return nothing else. No pleasantries. Text: ${text}`;
             console.log('Summarise Prompt: ', prompt);
             const response = await this.ollama.chat({
                 model: this.model,
@@ -118,6 +119,89 @@ class LocalLLM {
             }
         } catch (error) {
             const message = "LocalLLMTagGenerationError: Failed to generate tags - " + error;
+            console.error(message);
+            throw new Error(message);
+        }
+    }
+
+    /**
+     * Generate quiz questions from a document title and summary
+     * @param {string} title - The document title
+     * @param {string} summary - The document summary
+     * @returns {Promise<Question[]>} Array of 3 quiz questions
+     */
+    async generate_quiz(title: string, summary: string): Promise<Question[]> {
+        try {
+            const prompt = `Generate exactly 3 multiple-choice quiz questions based on the following document.
+
+Document Title: ${title}
+
+Document Summary: ${summary}
+
+Return a JSON array with exactly 3 question objects. Each question must have:
+- "questionText": A clear question about the document content
+- "options": An array of exactly 4 answer choices
+- "correctAnswerIndex": The index (0-3) of the correct answer
+
+Requirements:
+- Questions should test understanding, not just recall
+- All 4 options should be plausible
+- Only one answer should be correct
+- Questions should cover different aspects of the document
+
+Return ONLY the JSON array, nothing else. No markdown, no explanation.`;
+
+            console.log('Quiz Prompt: ', prompt);
+            const response = await this.ollama.chat({
+                model: this.model,
+                messages: [
+                    {
+                        role: 'system',
+                        content: 'You are a quiz generator that creates educational multiple-choice questions. You must return ONLY valid JSON with no additional text, markdown, or explanation.'
+                    },
+                    { role: 'user', content: prompt }
+                ],
+            });
+
+            let content = response.message.content.trim();
+            console.log('Quiz Response: ', content);
+
+            // Try to extract JSON if wrapped in markdown code blocks
+            const jsonMatch = content.match(/```(?:json)?\s*([\s\S]*?)```/);
+            if (jsonMatch) {
+                content = jsonMatch[1].trim();
+            }
+
+            // Parse and validate the response
+            let questions: Question[];
+            try {
+                questions = JSON.parse(content);
+            } catch (parseError) {
+                console.error('LocalLLMQuizGenerationError: Failed to parse JSON:', parseError);
+                throw new Error('Failed to parse quiz response as JSON');
+            }
+
+            // Validate structure
+            if (!Array.isArray(questions) || questions.length !== 3) {
+                throw new Error('Quiz response must be an array of exactly 3 questions');
+            }
+
+            for (let i = 0; i < questions.length; i++) {
+                const q = questions[i];
+                if (!q.questionText || typeof q.questionText !== 'string') {
+                    throw new Error(`Question ${i + 1} missing valid questionText`);
+                }
+                if (!Array.isArray(q.options) || q.options.length !== 4) {
+                    throw new Error(`Question ${i + 1} must have exactly 4 options`);
+                }
+                if (typeof q.correctAnswerIndex !== 'number' || q.correctAnswerIndex < 0 || q.correctAnswerIndex > 3) {
+                    throw new Error(`Question ${i + 1} has invalid correctAnswerIndex`);
+                }
+            }
+
+            return questions;
+        } catch (error) {
+            const message = "LocalLLMQuizGenerationError: Failed to generate quiz - " + error;
             console.error(message);
             throw new Error(message);
         }

@@ -11,3 +11,5 @@ node_modules/
 # Exclude NodeJS / TypeScript build files
 /backend/server/dist/
 /backend/server/build/
+
+.DS_store

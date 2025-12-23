@@ -8,80 +8,104 @@ import db from "../models/index.js";
 import { SummariseDocumentResponse } from "../types/document.types.js";
 import { ErrorResponse } from "../types/generic.types.js";
 
+// Upload directory must match the multer config in routes/document.ts
+const UPLOAD_DIR = path.resolve('uploads');
 
+// Timeout utility for LLM calls
+const withTimeout = <T>(promise: Promise<T>, ms: number, operation: string): Promise<T> => {
+  const timeout = new Promise<never>((_, reject) =>
+    setTimeout(() => reject(new Error(`${operation} timed out after ${ms}ms`)), ms)
+  );
+  return Promise.race([promise, timeout]);
+};
+
+const LLM_TIMEOUT = parseInt(process.env.LLM_TIMEOUT || '60000');
 let localLLM: LocalLLM;
 try{
-  localLLM = new LocalLLM();
+  let model = process.env.LLM_MODEL || 'gemma3:1b';
+  localLLM = new LocalLLM(model=model);
 } catch (Error) {
   console.error("Failed to initialize LocalLLM: " + Error);
 }
 
 
-const summarise_document = async (req: Request, res: Response, next: NextFunction) => {
+const summarise_document = async (req: Request, res: Response, _next: NextFunction) => {
+  let filePath: string | null = null;
+
   try {
     if (!req.file) {
-      return res.status(400).json({ error: 'No file uploaded. Please upload a PDF file.' });
+      return res.status(400).json({ error: 'No file uploaded. Please upload a text document (.txt or .md).' });
     }
     const file = req.file;
-    const user = req.user; // This comes from the auth middleware
+    filePath = file.path;
+
+    const user = req.user;
     if (!user) {
       return res.status(401).json({ error: 'Authentication required' });
     }
 
-    // Check if the uploaded file is a PDF
-    if (file.mimetype !== 'application/pdf') {
-      // Clean up the uploaded file if it's not a PDF
-      fs.unlinkSync(file.path);
-      return res.status(400).json({ 
-        error: 'Invalid file type. Only PDF files are allowed.' 
+    // Check if LLM service is available
+    if (!localLLM) {
+      return res.status(503).json({ error: 'LLM service unavailable. Please try again later.' });
+    }
+
+    // Check if the uploaded file is a text document
+    const allowedMimeTypes = ['text/plain', 'text/markdown'];
+    if (!allowedMimeTypes.includes(file.mimetype)) {
+      return res.status(400).json({
+        error: 'Invalid file type. Only text documents (.txt, .md) are allowed.'
       });
     }
 
     // Generate a unique ID for the document
-    const pdfName = file.originalname;
+    const fileName = file.originalname;
     const uniqueId = createHash('sha256')
-      .update(user.id + pdfName + Date.now())
+      .update(user.id + fileName + Date.now())
       .digest('hex');
 
-    console.log('Processing PDF file:', {
+    console.log('Processing document:', {
       originalName: file.originalname,
       size: file.size,
       mimetype: file.mimetype,
       path: file.path
     });
 
-    // Read the uploaded file
+    // Read the uploaded text file
     const documentPath = path.resolve(file.path);
-    console.log('Reading PDF from path:', documentPath);
-    
-    // Note: For actual PDF text extraction, you'll need a PDF parsing library
-    // like pdf-parse, pdf.js, or pdf2json. The current implementation assumes
-    // the file is already in text format, which isn't the case for PDFs.
+    console.log('Reading document from path:', documentPath);
+
     let documentText = fs.readFileSync(documentPath, 'utf8');
-    
-    // If we successfully read the file, clean it up
-    fs.unlinkSync(documentPath);
+
     if (!documentText) {
-      const errorResponse: ErrorResponse = {  
-        error: 'Could not extract text from the PDF. The file might be corrupted or empty.'
+      const errorResponse: ErrorResponse = {
+        error: 'Could not read the document. The file might be corrupted or empty.'
       }
       return res.status(400).json(errorResponse);
     }
-    
+
     // Clean up whitespace
     documentText = documentText.replace(/\s+/g, ' ').trim();
     if (!documentText) {
-      return res.status(400).json({ error: "No text found in document. Please upload a valid PDF file." });
+      return res.status(400).json({ error: "No text found in document. Please upload a valid text file." });
     }
-    documentText = documentText.replace(/\s+/g, ' ');
-    
-    const title = await localLLM.generate_title(documentText);
-    const summary = await localLLM.summarise(documentText);
-    // Return empty list for now until tags generation is fixed.
-    const tags: string[] = []
+
+    // Generate title and summary with timeout
+    const title = await withTimeout(
+      localLLM.generate_title(documentText),
+      LLM_TIMEOUT,
+      'Title generation'
+    );
+    const summary = await withTimeout(
+      localLLM.summarise(documentText),
+      LLM_TIMEOUT,
+      'Summary generation'
+    );
+
+    const tags: string[] = [];
     console.log('Document title: ', title);
     console.log('Document tags: ', tags);
     console.log('Document summary: ', summary);
+
     const response: SummariseDocumentResponse = {
       message: 'Document summarised successfully',
       id: uniqueId,
@@ -91,9 +115,34 @@ const summarise_document = async (req: Request, res: Response, next: NextFunctio
     };
     res.json(response);
   } catch (error) {
-    console.error("SummariseDocumentError: " + error);
-    // res.status(500).json({ error: "Error: " + error });
-    next(error);
+    console.error("SummariseDocumentError:", error);
+
+    // Categorize errors and return appropriate status
+    const errorMessage = error instanceof Error ? error.message : String(error);
+
+    if (errorMessage.includes('timed out')) {
+      return res.status(504).json({ error: 'Document processing timed out. Please try again.' });
+    }
+    if (errorMessage.includes('LocalLLM')) {
+      return res.status(502).json({ error: 'Failed to process document with AI service.' });
+    }
+
+    return res.status(500).json({ error: 'An unexpected error occurred while processing the document.' });
+  } finally {
+    // Always clean up temp file
+    if (filePath) {
+      try {
+        // Resolve to absolute path and validate it's within the upload directory
+        const resolvedPath = path.resolve(filePath);
+        if (!resolvedPath.startsWith(UPLOAD_DIR + path.sep)) {
+          console.error('Security: Attempted to delete file outside upload directory:', resolvedPath);
+        } else if (fs.existsSync(resolvedPath)) {
+          fs.unlinkSync(resolvedPath);
+        }
+      } catch (cleanupError) {
+        console.error('Failed to cleanup temp file:', cleanupError);
+      }
+    }
   }
 };
 
